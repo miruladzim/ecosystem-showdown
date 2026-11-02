@@ -94,7 +94,7 @@
   input[type=text]{font:inherit;font-weight:800;font-size:20px;text-align:center;padding:12px 16px;border-radius:16px;border:2px solid var(--line);background:rgba(3,24,32,.55);color:var(--text);width:100%;max-width:360px}
   input[type=text]::placeholder{color:#7fa3b3;font-weight:600}
   input[type=text]:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 4px rgba(255,210,74,.22)}
-  .modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+  .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0 4px}
   .mode{position:relative;background:var(--glass);border:2px solid var(--line);border-radius:20px;padding:16px;cursor:pointer;text-align:left;color:var(--text);font:inherit;transition:transform .15s,border-color .15s,background .15s}
   .mode:hover{transform:translateY(-3px)}
   .mode.sel{border-color:var(--gold);background:rgba(255,210,74,.14);box-shadow:0 0 0 4px rgba(255,210,74,.14)}
@@ -163,7 +163,12 @@
   .lifelines{display:flex;gap:8px;flex-wrap:wrap}
   .life{font:inherit;font-family:var(--head);font-weight:800;font-size:16px;border:2px dashed rgba(255,210,74,.7);background:rgba(255,210,74,.08);color:var(--gold);border-radius:14px;padding:6px 14px;cursor:pointer;transition:transform .12s,background .15s}
   .life:hover:not(:disabled){background:rgba(255,210,74,.22);transform:translateY(-2px)}
-  .life:disabled{opacity:.3;cursor:not-allowed;text-decoration:line-through;border-style:solid}
+  .life:disabled{opacity:.45;cursor:not-allowed;border-style:solid;border-color:rgba(255,255,255,.25);color:var(--muted);background:transparent}
+  .life:disabled::after{content:" ✓ used";font-size:12px;font-weight:800}
+  .life[hidden]{display:none}
+  .btn.resume{display:flex;flex-direction:column;align-items:center;line-height:1.1}
+  .btn.resume[hidden]{display:none}
+  .btn.resume small{font-family:var(--body);font-size:13px;font-weight:700;opacity:.9;margin-top:2px}
   .lifelabel{font-size:13px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px}
   .hint{background:rgba(3,24,32,.55);border-left:5px solid var(--gold);padding:10px 14px;border-radius:12px;margin-top:12px;display:none;font-size:16px}
   .hint.show{display:block;animation:rise .3s both}
@@ -207,6 +212,88 @@
   .rv b{font-family:var(--head);font-size:17.5px}
   .tag{display:inline-block;font-size:12.5px;border-radius:99px;padding:0 10px;margin-left:6px;background:var(--glass2);color:var(--muted);font-weight:800}
 
+  /* ---- TEAM SETUP / TEAM BAR ---- */
+  .tc{font:inherit;font-family:var(--head);font-weight:800;font-size:22px;width:58px;height:52px;border-radius:16px;border:2px solid var(--line);background:var(--glass);color:var(--text);cursor:pointer}
+  .tc.sel{border-color:var(--gold);background:rgba(255,210,74,.2)}
+  .teamNames{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .teamNames label{display:flex;align-items:center;gap:8px;background:rgba(3,24,32,.45);border-radius:16px;padding:6px 10px;border:1.5px solid var(--line)}
+  .teamNames label span{font-size:28px}
+  .teamNames input{font:inherit;font-weight:800;font-size:16px;background:transparent;border:0;color:var(--text);width:100%;padding:6px 2px}
+  .teamNames input:focus{outline:none;border-bottom:2px solid var(--gold)}
+  .teamBar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .tchip{flex:1;min-width:120px;display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:16px;background:rgba(3,24,32,.45);border:2px solid var(--line);transition:all .3s;font-weight:800}
+  .tchip .ta{font-size:24px}
+  .tchip .tn{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}
+  .tchip .ts{font-family:var(--head);font-size:20px;color:var(--gold)}
+  .tchip.on{border-color:var(--gold);background:rgba(255,210,74,.18);transform:translateY(-2px);box-shadow:0 0 0 4px rgba(255,210,74,.15)}
+  .tchip.on .ta{animation:bob 1.4s ease-in-out infinite}
+
+  /* ---- ORDER PUZZLE ---- */
+  .slots{display:flex;flex-wrap:nowrap;align-items:center;gap:3px;margin-bottom:12px;padding:12px;border-radius:18px;background:rgba(3,24,32,.45);border:2px dashed var(--line)}
+  .slot{flex:1 1 0;min-width:0;max-width:76px;height:72px;border-radius:16px;border:2px dashed rgba(255,255,255,.35);display:grid;place-items:center;text-align:center;font-size:30px;line-height:1;cursor:pointer;background:rgba(255,255,255,.05);position:relative;transition:all .2s}
+  .slot small{display:block;font-size:10.5px;font-weight:800;margin-top:3px;color:var(--muted)}
+  .slot.filled{border-style:solid;border-color:var(--sky);background:rgba(56,189,248,.16);animation:pop .3s both}
+  .slot.ok{border-color:var(--mint);background:rgba(52,211,153,.3)}
+  .slot.bad{border-color:var(--coral);background:rgba(251,113,133,.3);animation:shakeX .4s both}
+  .slot .n{position:absolute;top:-9px;left:-7px;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#4a2c00;font-size:12px;font-weight:900;display:grid;place-items:center}
+  .arrow{color:var(--gold);font-weight:900;font-size:16px;flex:none}
+  .slot small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .tiles{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+  .tile{font:inherit;font-family:var(--head);font-weight:800;font-size:16px;display:flex;align-items:center;gap:8px;padding:8px 14px 8px 8px;border-radius:16px;cursor:pointer;color:var(--text);border:2px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.06));box-shadow:0 4px 0 rgba(0,0,0,.28);transition:transform .12s,opacity .2s}
+  .tiles{animation:rise .35s both}
+  .tile .e{font-size:28px}
+  .tile:hover:not(:disabled){transform:translateY(-3px)}
+  .tile:disabled{opacity:.18;cursor:default;transform:scale(.94)}
+  .pzrow{display:flex;gap:10px;flex-wrap:wrap}
+
+  /* ---- ECOSYSTEM ---- */
+  .eco{margin-top:16px;border-radius:20px;padding:10px 12px 8px;background:linear-gradient(180deg,rgba(125,211,252,.22) 0%,rgba(125,211,252,.08) 55%,rgba(101,163,13,.45) 56%,rgba(63,98,18,.55) 100%);border:1.5px solid var(--line);display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:2px;align-items:end;position:relative;overflow:hidden}
+  .eco::before{content:"🌍 Your ecosystem";position:absolute;top:6px;left:12px;font-size:12px;font-weight:800;color:#e0f2fe;opacity:.85}
+  .eco span{font-size:26px;text-align:center;line-height:1.3;filter:grayscale(1) brightness(.4);opacity:.35;transition:all .4s;padding-top:16px}
+  .eco span.alive{filter:none;opacity:1;animation:sprout .7s cubic-bezier(.2,1.6,.4,1) both}
+  .eco span.alive.idle{animation:bob 3.2s ease-in-out infinite}
+  .eco.big{grid-template-columns:repeat(6,1fr);padding:10px 14px;row-gap:10px;background:linear-gradient(180deg,rgba(125,211,252,.2) 0 62%,rgba(101,163,13,.5) 62% 100%);background-size:100% 50%;background-repeat:repeat-y}
+  .eco.big span{padding-top:4px}
+  .eco.big span{font-size:40px}
+  .eco.big::before{content:""}
+  @keyframes sprout{0%{transform:scale(0) translateY(20px)}100%{transform:scale(1)}}
+
+  /* ---- OVERLAY / TOASTS / ACHIEVEMENTS / PODIUM ---- */
+  .overlay{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(2,20,28,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);cursor:pointer}
+  .overlay[hidden]{display:none}
+  .ovin{text-align:center;font-family:var(--head);font-weight:800;animation:zoomIn .45s cubic-bezier(.2,1.6,.4,1) both}
+  .ovin .num{font-size:140px;line-height:1;background:linear-gradient(180deg,#fff6c9,var(--gold),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 8px 0 rgba(120,53,15,.6))}
+  .ovin .ta{font-size:110px;line-height:1;display:block;animation:bob 1.2s ease-in-out infinite}
+  .ovin .tt{font-size:clamp(30px,7vw,52px);color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.4)}
+  .ovin .ts{font-size:18px;color:var(--muted);font-family:var(--body)}
+  @keyframes zoomIn{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+  .toasts{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:45;display:grid;gap:8px;width:min(92vw,380px);pointer-events:none}
+  .toast{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:18px;background:linear-gradient(180deg,#3b2a6b,#24184a);border:2px solid var(--violet);box-shadow:0 12px 30px rgba(0,0,0,.45);animation:toastIn .5s cubic-bezier(.2,1.5,.4,1) both, toastOut .4s 3s forwards}
+  .toast.fire{background:linear-gradient(180deg,#9a3412,#7c2d12);border-color:var(--orange)}
+  .toast .ti{font-size:34px}
+  .toast b{display:block;font-family:var(--head);font-size:17px}
+  .toast span{font-size:13.5px;color:#e9ddff}
+  @keyframes toastIn{from{transform:translateY(-30px) scale(.8);opacity:0}}
+  @keyframes toastOut{to{transform:translateY(-20px);opacity:0}}
+  .achs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .ach{background:rgba(3,24,32,.5);border:1.5px solid var(--line);border-radius:16px;padding:10px;text-align:center;font-size:13px;color:var(--muted)}
+  .ach i{display:block;font-style:normal;font-size:32px;filter:grayscale(1);opacity:.35}
+  .ach b{display:block;font-family:var(--head);font-size:15px;color:var(--muted)}
+  .ach.got{border-color:var(--violet);background:rgba(167,139,250,.16);color:#e9ddff}
+  .ach.got i{filter:none;opacity:1}
+  .ach.got b{color:#fff}
+  .ach.new{animation:pop .6s both;box-shadow:0 0 0 3px rgba(167,139,250,.45)}
+  .podium{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin:18px 0 6px;min-height:200px}
+  .pod{flex:1;max-width:150px;text-align:center}
+  .pod .pa{font-size:40px;animation:bob 2.6s ease-in-out infinite}
+  .pod .pn{font-weight:800;font-size:14px;margin:2px 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pod .pb{border-radius:14px 14px 4px 4px;display:grid;place-items:start center;padding-top:8px;font-family:var(--head);font-weight:800;font-size:22px;animation:growUp .9s cubic-bezier(.2,1.3,.4,1) both;transform-origin:bottom}
+  .pod:nth-child(1) .pb{background:linear-gradient(180deg,#ffe27a,var(--gold2));color:#4a2c00}
+  .pod:nth-child(2) .pb{background:linear-gradient(180deg,#e2e8f0,#94a3b8);color:#1e293b}
+  .pod:nth-child(3) .pb{background:linear-gradient(180deg,#fdba74,#c2410c);color:#fff}
+  .pod:nth-child(4) .pb{background:var(--glass2)}
+  @keyframes growUp{from{transform:scaleY(0)}}
+
   /* ---- BOARD / TEACHER ---- */
   table{width:100%;border-collapse:separate;border-spacing:0 8px;font-size:17px}
   th{color:var(--muted);font-weight:800;text-align:left;padding:0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.8px}
@@ -249,7 +336,14 @@
   @media (max-width:600px){
     body{padding-left:10px;padding-right:10px}
     .card{padding:16px;border-radius:22px}
-    .modes,.how{grid-template-columns:1fr}
+    .modes,.how,.teamNames{grid-template-columns:1fr}
+    .achs{grid-template-columns:1fr 1fr}
+    .eco span{font-size:min(20px,5.2vw)}
+    .eco.big span{font-size:30px}
+    .slot{height:62px;font-size:24px}
+    .slot small{font-size:9px}
+    .arrow{font-size:12px}
+    .tchip{min-width:0;padding:5px 8px}.tchip .tn{font-size:13px}
     .fbin{grid-template-columns:auto 1fr}
     .fbin .btn{grid-column:1/-1;width:100%}
     .mascot{width:58px;height:58px;font-size:34px}
@@ -290,9 +384,21 @@
       <div class="hero" aria-hidden="true"><em>✨</em><span>🌿</span><span>🦉</span><span>🐸</span><em>✨</em></div>
       <h1>Ecosystem Showdown</h1>
       <p class="muted">Food chains, food webs &amp; how living things interact</p>
-      <div class="chips"><span class="chip">📘 Form 2 Science</span><span class="chip">❓ 12 questions</span><span class="chip">⏱ about 8 minutes</span></div>
+      <div class="chips"><span class="chip">📘 Form 2 Science</span><span class="chip">❓ 12 challenges</span><span class="chip">⏱ about 10 minutes</span><span class="chip" id="achChip">🏅 0/9 badges</span></div>
 
-      <div class="sec">
+      <div class="modes" role="radiogroup" aria-label="Game mode">
+        <button class="mode sel" data-mode="practice" role="radio" aria-checked="true">
+          <b>🌱 Practice</b><span>Solo, no timer. Take your time and learn.</span>
+        </button>
+        <button class="mode" data-mode="challenge" role="radio" aria-checked="false">
+          <b>⚡ Challenge</b><span>Solo, 30s per question. Speed = bonus points!</span>
+        </button>
+        <button class="mode" data-mode="team" role="radio" aria-checked="false">
+          <b>👥 Team Battle</b><span>2–4 teams take turns on one screen. Gameshow style!</span>
+        </button>
+      </div>
+
+      <div class="sec" id="soloSetup">
         <label class="lbl">Pick your explorer</label>
         <div class="avatars" id="avatars" role="radiogroup" aria-label="Choose an avatar">
           <button class="av sel" data-av="🐸" role="radio" aria-checked="true" aria-label="Frog">🐸</button>
@@ -303,20 +409,20 @@
           <button class="av" data-av="🦋" role="radio" aria-checked="false" aria-label="Butterfly">🦋</button>
         </div>
         <label class="lbl" for="name">Your name or team name</label>
-        <input id="name" type="text" maxlength="20" placeholder="e.g. Team Harimau" autocomplete="off">
+        <input id="name" type="text" maxlength="20" placeholder="Type your name" autocomplete="off">
       </div>
 
-      <div class="modes" role="radiogroup" aria-label="Game mode">
-        <button class="mode sel" data-mode="practice" role="radio" aria-checked="true">
-          <b>🌱 Practice</b><span>No timer. Take your time. Great for warming up.</span>
-        </button>
-        <button class="mode" data-mode="challenge" role="radio" aria-checked="false">
-          <b>⚡ Challenge</b><span>30 seconds per question. Faster answers earn bonus points!</span>
-        </button>
+      <div class="sec" id="teamSetup" hidden>
+        <label class="lbl">How many teams?</label>
+        <div class="row center" id="teamCount" role="radiogroup" aria-label="Number of teams">
+          <button class="tc" data-n="2" role="radio">2</button><button class="tc sel" data-n="3" role="radio">3</button><button class="tc" data-n="4" role="radio">4</button>
+        </div>
+        <div class="teamNames" id="teamNames"></div>
       </div>
 
-      <div class="row center">
-        <button class="btn big-cta" id="btnStart">▶ Start game</button>
+      <div class="row center sec">
+        <button class="btn pink resume" id="btnResume" hidden>▶ Continue game</button>
+        <button class="btn big-cta" id="btnStart">▶ Start new game</button>
       </div>
       <div class="row center" style="margin-top:14px">
         <button class="btn secondary" id="btnHow" style="font-size:16px;padding:8px 16px">❓ How to play</button>
@@ -325,10 +431,14 @@
       </div>
       <div id="how" class="how">
         <div><b>⭐ Score points</b>Each correct answer = 100 points. Build a 🔥 streak for +20 per level.</div>
-        <div><b>🆘 Lifelines</b>50:50, Hint and +15s (Challenge). One use each.</div>
+        <div><b>🌍 Grow your ecosystem</b>Every correct answer brings a new species to life in your world.</div>
+        <div><b>🔗 Puzzle challenge</b>Some challenges ask you to build a food chain in the right order.</div>
+        <div><b>👥 Team Battle</b>Teams take turns. Each team has its own score and lifelines.</div>
+        <div><b>🆘 Lifelines</b>50:50, Hint and +15s (timed modes). One use each.</div>
+        <div><b>🏅 Badges</b>Unlock 9 achievements, like a 5-answer streak or a perfect game.</div>
         <div><b>🎁 Bonus round</b>Questions 10–12 are worth double points!</div>
         <div><b>🔁 Second chance</b>Missed some? Fix them at the end for 50 points each.</div>
-        <div style="grid-column:1/-1"><b>🔈 Tips</b>Tap the speaker to hear a question read aloud. On a keyboard, keys 1–4 pick an answer and Enter moves on.</div>
+        <div style="grid-column:1/-1"><b>🔈 Tips</b>Tap the speaker to hear a question read aloud. On a keyboard, number keys pick an answer and Enter moves on. Tap 🏠 any time: your progress is saved and you can continue later.</div>
       </div>
     </div>
   </section>
@@ -337,12 +447,13 @@
   <section id="s-game" class="screen">
     <div class="card" id="gameCard">
       <div class="hud">
-        <button class="iconbtn" id="btnQuit" title="Quit to menu" aria-label="Quit to menu">✕</button>
+        <button class="iconbtn" id="btnQuit" title="Home (progress is saved)" aria-label="Home, progress is saved">🏠</button>
         <span class="pill" id="hudQ">Q 1 / 12</span>
         <span class="sp"></span>
         <span class="pill fire" id="hudStreak" hidden>🔥 x0</span>
         <span class="pill gold" id="hudScore">⭐ 0</span>
       </div>
+      <div class="teamBar" id="teamBar" hidden></div>
       <div class="dots" id="dots" aria-hidden="true"></div>
       <div class="timer" id="timer"><div class="track"><i id="timerBar"></i></div><b id="timeNum">30</b></div>
       <div class="bonus" id="bonus" hidden>⭐ BONUS ROUND · DOUBLE POINTS ⭐</div>
@@ -362,6 +473,7 @@
           <div class="hint" id="hintBox"></div>
         </div>
       </div>
+      <div class="eco" id="eco" aria-label="Your ecosystem"></div>
     </div>
   </section>
 
@@ -375,6 +487,7 @@
       <div class="row center sec">
         <button class="btn" id="btnRedeem">Let's fix them!</button>
         <button class="btn secondary" id="btnSkipRedeem">Skip to results</button>
+        <button class="btn secondary" id="btnRedeemHome">🏠 Home</button>
       </div>
     </div>
   </section>
@@ -389,6 +502,15 @@
         <div class="stars" id="rStars"></div>
         <div class="badge" id="rBadge"></div>
         <p id="rMsg"></p>
+      </div>
+      <div class="podium" id="rPodium" hidden></div>
+      <div class="sec">
+        <h3>🌍 Your ecosystem</h3>
+        <div class="eco big" id="rEco"></div>
+      </div>
+      <div class="sec">
+        <h3>🏅 Achievements</h3>
+        <div class="achs" id="rAch"></div>
       </div>
       <div class="sec" id="reportSec">
         <h3>📄 Short report</h3>
@@ -411,7 +533,7 @@
         <div class="review" id="rReview"></div>
       </div>
       <div class="row center sec">
-        <button class="btn" id="btnAgain">🔄 Play again</button>
+        <button class="btn" id="btnAgain">🏠 Home / play again</button>
         <button class="btn pink" id="btnCopy">📋 Copy results</button>
         <button class="btn secondary" id="btnBoard2">🏆 Leaderboard</button>
       </div>
@@ -461,6 +583,8 @@
   </div>
 </div>
 <div class="confetti" id="confetti"></div>
+<div class="overlay" id="overlay" hidden><div class="ovin" id="ovin"></div></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
 
 <script>
 /* ---------- Illustrations (original SVG scenes built from emoji) ---------- */
@@ -473,52 +597,53 @@ const DARK=`<rect width="400" height="200" fill="#1e3a5f"/>`;
 
 /* ---------- Questions ---------- */
 const QUESTIONS=[
- {topic:"Food chains & webs", q:"Which organism is the PRODUCER in this food chain?",
+ {eco:"🌾", topic:"Food chains & webs", q:"Which organism is the PRODUCER in this food chain?",
   a:["Grass","Grasshopper","Frog","Snake"], hint:"A producer makes its own food using sunlight.",
   why:"Grass is the producer. It makes its own food by photosynthesis, using energy from the Sun. Every other organism in the chain is a consumer.",
   scene:()=>svg(SKY()+E(55,110,"🌾",50)+A(85,110,120,110)+E(150,110,"🦗",44)+A(180,110,215,110)+E(245,110,"🐸",44)+A(275,110,310,110)+E(340,110,"🐍",48)+`<text x="200" y="185" font-size="15" fill="#fff" text-anchor="middle" font-family="Baloo 2" font-weight="700">Arrows show who is eaten by whom (energy flow)</text>`)},
- {topic:"Food chains & webs", q:"What is the main source of energy for every food chain?",
+ {eco:"☀️", topic:"Food chains & webs", q:"What is the main source of energy for every food chain?",
   a:["The Sun","Soil","Water","Wind"], hint:"Plants need it for photosynthesis.",
   why:"The Sun. Producers capture light energy from the Sun during photosynthesis. That energy then passes to every consumer along the food chain.",
   scene:()=>svg(SKY("#fde68a","#fff7ed")+`<g stroke="#f59e0b" stroke-width="4" opacity=".7"><line x1="80" y1="60" x2="180" y2="140"/><line x1="80" y1="60" x2="250" y2="130"/><line x1="80" y1="60" x2="320" y2="140"/></g>`+E(80,55,"☀️",70)+E(190,150,"🌿",40)+E(260,145,"🌳",56)+E(330,150,"🌻",40))},
- {topic:"Food chains & webs", q:"Grass → Grasshopper → Frog → Snake. Which organism is the SECONDARY consumer?",
-  a:["Frog","Grasshopper","Snake","Grass"], hint:"It eats the primary consumer.",
-  why:"The frog. The grasshopper is the primary consumer because it eats the producer. The frog eats the grasshopper, so it is the secondary consumer. The snake is the tertiary consumer.",
-  scene:()=>svg(SKY()+E(55,95,"🌾",44,"Producer")+A(85,95,120,95)+E(150,95,"🦗",40,"Primary")+A(180,95,215,95)+E(245,95,"🐸",40,"?")+A(275,95,310,95)+E(340,95,"🐍",44,"Tertiary"))},
- {topic:"Food chains & webs", q:"A tiger hunts and eats deer. What type of consumer is the tiger?",
+ {type:"order", eco:"🦅", topic:"Food chains & webs", q:"Build the food chain! Tap the organisms in order, from the producer to the top consumer.",
+  items:[["🌾","Paddy"],["🦗","Grasshopper"],["🐸","Frog"],["🐍","Snake"],["🦅","Eagle"]],
+  a:["Paddy → Grasshopper → Frog → Snake → Eagle"], hint:"Start with the organism that makes its own food. Each one after it eats the one before.",
+  why:"Paddy is the producer. The grasshopper (primary consumer) eats paddy, the frog (secondary consumer) eats grasshoppers, the snake (tertiary consumer) eats frogs, and the eagle is the top consumer. Energy flows along the chain in this order.",
+  scene:()=>svg(SKY()+E(50,120,"🌾",46)+[110,170,230,290,350].map((x,k)=>k?`<rect x="${x-24}" y="96" width="48" height="48" rx="12" fill="#ffffff" opacity=".55" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6 4"/><text x="${x}" y="122" font-size="26" text-anchor="middle" dominant-baseline="central" fill="#b45309" font-family="Baloo 2" font-weight="800">?</text>`:"").join("")+A(78,120,82,120)+`<text x="200" y="40" font-size="20" fill="#1e3a8a" text-anchor="middle" font-family="Baloo 2" font-weight="800">Who eats whom? Put them in order!</text>`)},
+ {eco:"🐅", topic:"Food chains & webs", q:"A tiger hunts and eats deer. What type of consumer is the tiger?",
   a:["Carnivore","Herbivore","Omnivore","Producer"], hint:"It eats only other animals.",
   why:"A carnivore eats only other animals. A herbivore eats only plants, and an omnivore eats both plants and animals.",
   scene:()=>svg(SKY("#fcd34d","#fef3c7","#a16207")+E(110,120,"🐅",80)+`<text x="200" y="110" font-size="40" text-anchor="middle">💨</text>`+E(300,120,"🦌",72))},
- {topic:"Food chains & webs", q:"Which organism breaks down dead plants and animals?",
+ {eco:"🍄", topic:"Food chains & webs", q:"Which organism breaks down dead plants and animals?",
   a:["Mushroom","Rabbit","Paddy plant","Hawk"], hint:"Think about fungi.",
   why:"Mushrooms are fungi, which are decomposers. They break down dead organisms and return nutrients to the soil, so plants can use them again.",
   scene:()=>svg(SKY("#94a3b8","#e2e8f0","#78350f")+`<rect x="60" y="120" width="280" height="38" rx="18" fill="#92400e"/><circle cx="72" cy="139" r="16" fill="#b45309"/>`+E(130,105,"🍄",44)+E(210,108,"🍄",36)+E(280,104,"🍄",46)+E(170,170,"🍂",26)+E(320,172,"🍂",24))},
- {topic:"Food chains & webs", q:"Many food chains linked together, like in the picture, form a…",
+ {eco:"🐇", topic:"Food chains & webs", q:"Many food chains linked together, like in the picture, form a…",
   a:["Food web","Habitat","Population","Niche"], hint:"It looks like a spider's web of feeding links.",
   why:"A food web is made of many food chains linked together. It shows that most animals eat, and are eaten by, more than one kind of organism.",
   scene:()=>svg(SKY("#a7f3d0","#ecfdf5","#4d7c0f")+E(200,165,"🌾",34)+E(80,110,"🦗",34)+E(200,105,"🐇",34)+E(320,110,"🐛",34)+E(120,40,"🐸",32)+E(280,40,"🐍",34)+E(200,30,"🦅",34)+
    A(195,150,90,125)+A(200,150,200,125)+A(205,150,310,125)+A(85,95,115,58)+A(310,95,285,58)+A(215,95,275,52)+A(130,40,262,40)+A(290,28,218,28))},
- {topic:"Food chains & webs", q:"In this paddy field, all the frogs die. What will most likely happen to the grasshoppers?",
+ {eco:"🐸", topic:"Food chains & webs", q:"In this paddy field, all the frogs die. What will most likely happen to the grasshoppers?",
   a:["Their number increases","Their number decreases","Their number stays the same","They all die"], hint:"Who eats the grasshoppers?",
   why:"Their number increases. Frogs eat grasshoppers. With no frogs, fewer grasshoppers are eaten, so more of them survive and breed, at least until their food (the paddy) runs short.",
   scene:()=>svg(SKY("#7dd3fc","#e0f2fe","#3f6212")+E(50,140,"🌾",40)+E(110,145,"🌾",40)+E(290,145,"🌾",40)+E(350,140,"🌾",40)+E(150,95,"🦗",30)+E(240,85,"🦗",30)+E(320,95,"🦗",30)+E(200,135,"🐸",54)+`<text x="200" y="135" font-size="80" fill="#ef4444" text-anchor="middle" dominant-baseline="central" font-family="Arial" font-weight="900">✕</text>`)},
- {topic:"Interactions", q:"Bees get nectar from flowers and help the flowers pollinate. This interaction is…",
+ {eco:"🐝", topic:"Interactions", q:"Bees get nectar from flowers and help the flowers pollinate. This interaction is…",
   a:["Mutualism","Parasitism","Commensalism","Predation"], hint:"Both organisms get something good.",
   why:"Mutualism: both organisms benefit. The bee gets food (nectar) and the flower gets its pollen carried to other flowers.",
   scene:()=>svg(SKY("#fbcfe8","#fdf2f8","#65a30d")+E(120,120,"🌸",70)+E(280,120,"🌼",70)+E(200,60,"🐝",50)+`<path d="M140 80 Q200 20 260 80" stroke="#fff" stroke-width="3" fill="none" stroke-dasharray="6 6"/>`+`<text x="70" y="40" font-size="16" fill="#9d174d" font-family="Baloo 2" font-weight="800">🐝 gets food ✔</text><text x="245" y="40" font-size="16" fill="#9d174d" font-family="Baloo 2" font-weight="800">🌸 gets pollinated ✔</text>`)},
- {topic:"Interactions", q:"A remora fish sticks to a shark and eats its leftover food. The shark is not harmed. This is…",
+ {eco:"🐟", topic:"Interactions", q:"A remora fish sticks to a shark and eats its leftover food. The shark is not harmed. This is…",
   a:["Commensalism","Mutualism","Parasitism","Competition"], hint:"One benefits; the other is neither helped nor harmed.",
   why:"Commensalism: one organism benefits (the remora gets food and free transport) while the other (the shark) is not helped or harmed.",
   scene:()=>svg(`<defs><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#0c4a6e"/></linearGradient></defs><rect width="400" height="200" fill="url(#sea)"/>`+E(200,90,"🦈",110)+E(215,150,"🐟",34)+E(80,40,"🫧",26)+E(330,50,"🫧",22)+`<text x="20" y="190" font-size="15" fill="#e0f2fe" font-family="Baloo 2" font-weight="700">Remora 🐟 under the shark</text>`)},
- {topic:"Interactions", q:"A tick sucks blood from a dog. This interaction is…",
+ {eco:"🐕", topic:"Interactions", q:"A tick sucks blood from a dog. This interaction is…",
   a:["Parasitism","Mutualism","Commensalism","Predation"], hint:"One benefits; the other is harmed.",
   why:"Parasitism: the tick (parasite) benefits by feeding on blood, while the dog (host) is harmed and can get sick.",
   scene:()=>svg(SKY("#fde68a","#fffbeb","#a3e635")+E(190,110,"🐕",110)+`<circle cx="232" cy="78" r="26" fill="none" stroke="#ef4444" stroke-width="4"/>`+E(232,78,"🕷️",20)+`<line x1="255" y1="66" x2="300" y2="40" stroke="#ef4444" stroke-width="3"/><text x="304" y="40" font-size="17" fill="#7f1d1d" font-family="Baloo 2" font-weight="800">tick</text>`)},
- {topic:"Interactions", q:"An owl catches and eats a rat. In this interaction, the owl is the…",
+ {eco:"🦉", topic:"Interactions", q:"An owl catches and eats a rat. In this interaction, the owl is the…",
   a:["Predator","Prey","Parasite","Host"], hint:"It hunts other animals.",
   why:"The owl is the predator: it hunts and eats the rat, which is its prey. Predation helps keep the rat population under control.",
   scene:()=>svg(SKY("#1e1b4b","#4338ca","#14532d")+E(330,40,"🌕",40)+E(70,30,"✨",20)+E(150,55,"✨",16)+E(130,80,"🦉",70)+A(170,100,240,140)+E(275,155,"🐀",46))},
- {topic:"Interactions", q:"Paddy plants and weeds grow close together. What do they mainly compete for?",
+ {eco:"🌿", topic:"Interactions", q:"Paddy plants and weeds grow close together. What do they mainly compete for?",
   a:["Water, nutrients and sunlight","Oxygen only","Carbon dioxide only","Space for animals"], hint:"What does every plant need to make food and grow?",
   why:"Competition: plants growing close together compete for the same limited resources (water, mineral nutrients from the soil, sunlight and space). That's why farmers remove weeds.",
   scene:()=>svg(SKY("#7dd3fc","#e0f2fe","#713f12")+E(60,40,"☀️",50)+E(340,40,"💧",34)+E(110,120,"🌾",56,"Paddy")+E(200,125,"🌿",50,"Weed")+E(290,120,"🌾",56,"Paddy"))}
@@ -542,7 +667,9 @@ function tone(freqs,dur=.12,type="sine",gap=.1,vol=.18){
 }
 const sfx={right:()=>tone([523,659,784],.16,"triangle",.09),wrong:()=>tone([220,165],.25,"sawtooth",.18,.12),
   tick:()=>tone([880],.05,"square",0,.05),life:()=>tone([440,660],.1,"sine",.08),
-  win:()=>tone([523,659,784,1047,784,1047],.18,"triangle",.12)};
+  win:()=>tone([523,659,784,1047,784,1047],.18,"triangle",.12),
+  tap:()=>tone([660],.05,"sine",0,.08),badge:()=>tone([784,988,1319],.14,"triangle",.08,.14),
+  fire:()=>tone([392,523,659,784,1047],.1,"square",.06,.07),turn:()=>tone([523,784],.14,"triangle",.12,.14)};
 function speak(t){try{if(!("speechSynthesis" in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-GB";u.rate=.95;speechSynthesis.speak(u);}catch(e){}}
 function syncToggles(){$("#btnSound").textContent=soundOn?"🔊":"🔇";$("#btnVoice").style.opacity=voiceOn?1:.45;}
 
@@ -555,7 +682,7 @@ function closeSheet(){$("#fb").className="fb";document.body.classList.remove("fb
 const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 function countUp(el,to,ms=700,prefix=""){const from=parseInt(el.dataset.v||"0",10)||0;el.dataset.v=to;const t0=performance.now();
   const step=t=>{const p=Math.min(1,(t-t0)/ms);el.textContent=prefix+Math.round(from+(to-from)*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step);}
-function floatPts(text){const r=$("#hudScore").getBoundingClientRect(),f=document.createElement("div");f.className="float-pts";f.textContent=text;
+function floatPts(text,el){const r=(el||$("#hudScore")).getBoundingClientRect(),f=document.createElement("div");f.className="float-pts";f.textContent=text;
   f.style.left=Math.max(8,r.left-20)+"px";f.style.top=(r.bottom+4)+"px";document.body.appendChild(f);setTimeout(()=>f.remove(),1400);}
 function updateDots(){const qs=G.phase==="redeem"?G.queue:[...Array(TOTAL).keys()];
   $("#dots").innerHTML=qs.map((qi,j)=>{let c="dot";const cur=G.phase==="redeem"?j===G.i:qi===curQ();
@@ -569,179 +696,384 @@ function confetti(){const c=$("#confetti");const cols=["#ffc93c","#ff4f8b","#22c
   setTimeout(()=>c.innerHTML="",4500);}
 
 /* ---------- Game state ---------- */
-let G=null, timerId=null;
+const TEAMS=[{n:"Team Harimau",av:"🐅"},{n:"Team Penyu",av:"🐢"},{n:"Team Kancil",av:"🦌"},{n:"Team Enggang",av:"🦜"}];
+let teamN=store.get("es_teamN",3), teamNames=store.get("es_teamNames",TEAMS.map(t=>t.n));
+const ACH=[
+ {id:"sprout",i:"🌱",n:"First Sprout",d:"Get your first answer right"},
+ {id:"hot",i:"🔥",n:"Hot Streak",d:"3 correct in a row"},
+ {id:"unstop",i:"🌋",n:"Unstoppable",d:"5 correct in a row"},
+ {id:"speed",i:"⚡",n:"Lightning Leaf",d:"Correct in under 5 seconds"},
+ {id:"chain",i:"🔗",n:"Chain Master",d:"Solve the food-chain puzzle first try"},
+ {id:"bonus",i:"⭐",n:"Bonus Hunter",d:"Win all 3 bonus questions"},
+ {id:"solo",i:"🧠",n:"No Help Needed",d:"Score 6+ without any lifeline"},
+ {id:"fixer",i:"🔁",n:"Never Give Up",d:"Fix a mistake in Second Chance"},
+ {id:"perfect",i:"🏆",n:"Perfect Ecosystem",d:"All 12 right first time"}];
+let achAll=store.get("es_ach",[]);
+let G=null, timerId=null, ovTimer=null, mode="practice";
+const teamMode=()=>G.mode==="team";
+const T=()=>G.teams[G.cur];
+const timed=()=>G.mode!=="practice"&&G.phase!=="redeem";
+
 function newGame(){
-  store.set("es_name",$("#name").value.trim());store.set("es_mode",mode);
-  return {name:($("#name").value.trim()||"Player").slice(0,20), av:avatar, mode, i:0, score:0, streak:0, best:0,
-    results:Array(TOTAL).fill(null), redeem:[], phase:"main", queue:[...Array(TOTAL).keys()],
-    lifes:{fifty:true,hint:true,time:true}, locked:false, timeLeft:TIME, order:[]};
+  store.set("es_mode",mode);
+  let teams;
+  if(mode==="team") teams=TEAMS.slice(0,teamN).map((t,k)=>({n:((teamNames[k]||"").trim()||t.n).slice(0,20),av:t.av}));
+  else{store.set("es_name",$("#name").value.trim());teams=[{n:($("#name").value.trim()||"Player").slice(0,20),av:avatar}];}
+  teams.forEach(t=>Object.assign(t,{score:0,streak:0,best:0,lifes:{fifty:true,hint:true,time:true}}));
+  return {mode,teams,cur:0,i:0,results:Array(TOTAL).fill(null),redeem:[],phase:"main",queue:[...Array(TOTAL).keys()],
+    locked:true,answered:false,timeLeft:TIME,order:[],ach:[],usedL:[]};
 }
-let mode="practice";
-document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
-  mode=b.dataset.mode;document.querySelectorAll(".mode").forEach(x=>{x.classList.toggle("sel",x===b);x.setAttribute("aria-checked",x===b)});
-});
-
-function startGame(){G=newGame();show("s-game");renderQ();}
-
+function startGame(){G=newGame();store.set("es_save",null);show("s-game");renderQ();}
 function curQ(){return G.queue[G.i];}
+
+/* ---------- Save & resume: students can leave any time and continue later ---------- */
+function saveGame(){if(!G)return;const s=Object.assign({},G);s.saved=Date.now();store.set("es_save",s);syncResume();}
+function syncResume(){
+  const s=store.get("es_save",null),b=$("#btnResume");
+  if(!s||!s.teams){b.hidden=true;return;}
+  const who=s.mode==="team"?"👥 Team Battle":`${s.teams[0].av} ${s.teams[0].n}`;
+  const where=s.phase==="redeem"?"Second Chance":`Q${Math.min(s.i+(s.answered?2:1),TOTAL)} of ${TOTAL}`;
+  b.innerHTML=`▶ Continue game <small>${esc(who)} · ${where}</small>`;b.hidden=false;
+}
+function resumeGame(){
+  const s=store.get("es_save",null);if(!s)return;
+  G=s;G.locked=true;
+  if(G.phase==="redeemIntro"){$("#missCount").textContent=G.missed.length;show("s-redeem");return;}
+  show("s-game");
+  if(G.answered){G.locked=true;next();} else renderQ();
+}
+function goHome(){
+  clearInterval(timerId);hideOverlay();try{speechSynthesis.cancel()}catch(e){}
+  if(G&&G.phase!=="done")saveGame();
+  syncAch();syncResume();show("s-start");
+  if(store.get("es_save",null))toast("💾","Progress saved","Tap Continue game whenever you're ready.");
+}
+
+/* ---------- Overlays: countdown + team turn ---------- */
+function overlay(html,ms,then){
+  const o=$("#overlay"),inn=$("#ovin");inn.innerHTML=html;inn.style.animation="none";void inn.offsetWidth;inn.style.animation="";o.hidden=false;
+  clearTimeout(ovTimer);
+  const done=()=>{clearTimeout(ovTimer);o.hidden=true;o.onclick=null;if(then)then();};
+  o.onclick=done;ovTimer=setTimeout(done,ms);
+}
+function hideOverlay(){clearTimeout(ovTimer);$("#overlay").hidden=true;$("#overlay").onclick=null;}
+function countdown(then){
+  const seq=["3","2","1","GO!"];let k=0;
+  const step=()=>{if(k>=seq.length){then();return;}const s=seq[k++];
+    tone([s==="GO!"?880:523],.16,"triangle");overlay(`<div class="num">${s}</div>`,s==="GO!"?550:650,step);};
+  step();
+}
+function turnSplash(then){
+  const t=T();sfx.turn();
+  overlay(`<span class="ta">${t.av}</span><div class="tt">${esc(t.n)}</div><div class="ts">It's your turn! Tap to start</div>`,1600,then);
+}
+
+/* ---------- Question rendering ---------- */
 function renderQ(){
-  const qi=curQ(), Q=QUESTIONS[qi]; G.locked=false;
-  const redeem=G.phase==="redeem";
+  const qi=curQ(),Q=QUESTIONS[qi],redeem=G.phase==="redeem";
+  G.locked=true;G.answered=false;clearInterval(timerId);closeSheet();
+  if(teamMode()&&!redeem) G.cur=G.i%G.teams.length;
+  saveGame();
   $("#hudQ").textContent=redeem?`Second chance ${G.i+1} / ${G.queue.length}`:`Q ${G.i+1} / ${TOTAL}`;
-  closeSheet();updateDots();
-  $("#hudScore").textContent="⭐ "+G.score;$("#hudScore").dataset.v=G.score;
-  $("#hudStreak").hidden=G.streak<2; $("#hudStreak").textContent="🔥 x"+G.streak;
+  updateDots();updateHud();renderEco($("#eco"));
   $("#bonus").hidden=redeem||qi<BONUS_FROM;
   $("#scene").innerHTML=Q.scene();
   $("#qText").textContent=Q.q;
+  if(Q.type==="order") renderOrder(Q); else renderMCQ(Q);
+  $("#hintBox").classList.remove("show");
+  const L=T().lifes;
+  $("#lifelines").style.display=redeem?"none":"flex";$("#lifeLabel").style.display=redeem?"none":"block";
+  $("#lifeLabel").textContent=teamMode()?`${T().av} ${T().n} · lifelines`:"Lifelines";
+  $("#l50").textContent=Q.type==="order"?"✂️ Place 2":"✂️ 50:50";
+  $("#l50").disabled=!L.fifty;$("#lHint").disabled=!L.hint;$("#lTime").disabled=!L.time;$("#lTime").hidden=!timed();
+  $("#timer").style.display=timed()?"flex":"none";G.timeLeft=TIME;if(timed())updTimer();
+  const first=G.i===0&&G.phase==="main";
+  if(first&&teamMode()) countdown(()=>turnSplash(go));
+  else if(first) countdown(go);
+  else if(teamMode()&&!redeem) turnSplash(go);
+  else go();
+}
+function go(){
+  if(!G||!$("#s-game").classList.contains("active"))return;
+  G.locked=false;G.qStart=Date.now();
+  if(timed()){timerId=setInterval(()=>{G.timeLeft-=.1;updTimer();
+    if(G.timeLeft<=5.05&&Math.abs(G.timeLeft-Math.round(G.timeLeft))<.05&&G.timeLeft>0)sfx.tick();
+    if(G.timeLeft<=0){clearInterval(timerId);timeUp();}},100);}
+  if(voiceOn) speak(readText());
+}
+function readText(){const Q=QUESTIONS[curQ()];
+  return Q.q+". "+(Q.type==="order"?Q.items.map(x=>x[1]).join(", "):G.order.map(o=>o.t).join(", "));}
+function updTimer(){const p=Math.max(0,G.timeLeft/TIME*100);$("#timerBar").style.width=p+"%";$("#timer").classList.toggle("low",G.timeLeft<=8);$("#timeNum").textContent=Math.ceil(Math.max(0,G.timeLeft))+"s";}
+
+function updateHud(){
+  const t=T();
+  if(teamMode()){
+    $("#hudScore").hidden=true;$("#teamBar").hidden=false;
+    $("#teamBar").innerHTML=G.teams.map((x,k)=>`<div class="tchip${k===G.cur?" on":""}" id="tc${k}"><span class="ta">${x.av}</span><span class="tn">${esc(x.n)}</span><span class="ts" data-v="${x.score}">${x.score}</span></div>`).join("");
+  }else{
+    $("#hudScore").hidden=false;$("#teamBar").hidden=true;
+    $("#hudScore").textContent="⭐ "+t.score;$("#hudScore").dataset.v=t.score;
+  }
+  $("#hudStreak").hidden=t.streak<2;$("#hudStreak").textContent="🔥 x"+t.streak;
+}
+
+/* multiple choice */
+function renderMCQ(Q){
   G.order=shuffle(Q.a.map((t,k)=>({t,ok:k===0})));
   $("#answers").innerHTML=G.order.map((o,k)=>`<button class="ans" data-k="${k}"><span class="k">${k+1}</span>${esc(o.t)}</button>`).join("");
   document.querySelectorAll(".ans").forEach(b=>b.onclick=()=>choose(+b.dataset.k));
-  $("#hintBox").classList.remove("show");
-  $("#lifelines").style.display=redeem?"none":"flex";$("#lifeLabel").style.display=redeem?"none":"block";
-  $("#l50").disabled=!G.lifes.fifty; $("#lHint").disabled=!G.lifes.hint;
-  $("#lTime").disabled=!G.lifes.time||G.mode!=="challenge";
-  // timer
-  clearInterval(timerId);
-  const timed=G.mode==="challenge"&&!redeem;
-  $("#timer").style.display=timed?"flex":"none";
-  if(timed){G.timeLeft=TIME;updTimer();timerId=setInterval(()=>{G.timeLeft-=.1;updTimer();
-      if(G.timeLeft<=5.05&&Math.abs(G.timeLeft-Math.round(G.timeLeft))<.05&&G.timeLeft>0)sfx.tick();
-      if(G.timeLeft<=0){clearInterval(timerId);choose(-1);}},100);}
-  G.qStart=Date.now();
-  if(voiceOn) speak(Q.q+". "+G.order.map(o=>o.t).join(", "));
 }
-function updTimer(){const p=Math.max(0,G.timeLeft/TIME*100);$("#timerBar").style.width=p+"%";$("#timer").classList.toggle("low",G.timeLeft<=8);$("#timeNum").textContent=Math.ceil(Math.max(0,G.timeLeft))+"s";}
-
+function markMCQ(k){document.querySelectorAll(".ans").forEach((b,j)=>{b.disabled=true;if(G.order[j].ok)b.classList.add("right");else if(j===k)b.classList.add("wrong");});}
 function choose(k){
-  if(G.locked) return; G.locked=true; clearInterval(timerId);
+  if(G.locked||G.answered)return;
+  G.locked=true;markMCQ(k);
+  resolve(G.order[k].ok,G.order[k].t,false);
+}
+
+/* food-chain ordering puzzle */
+function renderOrder(Q){
+  G.pick=[];G.tiles=shuffle(Q.items.map((it,k)=>({e:it[0],t:it[1],k})));
+  $("#answers").innerHTML=`<div class="slots" id="slots"></div><div class="tiles" id="tiles"></div>
+    <div class="pzrow"><button class="btn" id="btnCheck" disabled>✓ Check my chain</button><button class="btn secondary" id="btnClear" style="font-size:16px;padding:10px 16px">↺ Clear</button></div>`;
+  $("#btnCheck").onclick=checkOrder;
+  $("#btnClear").onclick=()=>{if(G.locked)return;G.pick=[];sfx.tap();drawOrder();};
+  drawOrder();
+}
+function drawOrder(state){
+  const Q=QUESTIONS[curQ()],n=Q.items.length;
+  $("#slots").innerHTML=Array.from({length:n},(_,s)=>{const p=G.pick[s],tl=p!=null?G.tiles[p]:null;
+    return (s?`<span class="arrow">→</span>`:"")+`<div class="slot${tl?" filled":""}${state?" "+state[s]:""}" data-s="${s}"><span class="n">${s+1}</span>${tl?`<div>${tl.e}<small>${esc(tl.t)}</small></div>`:""}</div>`;}).join("");
+  $("#tiles").innerHTML=G.tiles.map((tl,j)=>`<button class="tile" data-j="${j}"${G.pick.includes(j)||state?" disabled":""}><span class="e">${tl.e}</span>${esc(tl.t)}</button>`).join("");
+  document.querySelectorAll(".tile").forEach(b=>b.onclick=()=>pickTile(+b.dataset.j));
+  document.querySelectorAll(".slot").forEach(b=>b.onclick=()=>{if(G.locked)return;const s=+b.dataset.s;if(G.pick[s]!=null){G.pick.splice(s,1);sfx.tap();drawOrder();}});
+  $("#btnCheck").disabled=G.locked||G.pick.length<n;
+  $("#btnClear").disabled=G.locked;
+}
+function pickTile(j){
+  const n=QUESTIONS[curQ()].items.length;
+  if(G.locked||G.pick.includes(j)||G.pick.length>=n||!G.tiles[j])return;
+  G.pick.push(j);sfx.tap();drawOrder();
+}
+function checkOrder(){
+  const n=QUESTIONS[curQ()].items.length;
+  if(G.locked||G.answered||G.pick.length<n)return;
+  G.locked=true;
+  const state=G.pick.map((j,s)=>G.tiles[j].k===s?"ok":"bad");
+  drawOrder(state);
+  resolve(state.every(x=>x==="ok"),G.pick.map(j=>G.tiles[j].t).join(" → "),false);
+}
+
+function timeUp(){
+  if(G.answered)return;G.locked=true;
+  if(QUESTIONS[curQ()].type==="order") drawOrder(G.pick.map((j,s)=>G.tiles[j].k===s?"ok":"bad").concat(Array(QUESTIONS[curQ()].items.length).fill("bad")).slice(0,QUESTIONS[curQ()].items.length));
+  else markMCQ(-1);
+  resolve(false,"(time ran out)",true);
+}
+
+/* ---------- Scoring + feedback ---------- */
+function resolve(ok,chosen,timeout){
+  G.locked=true;G.answered=true;clearInterval(timerId);
   try{speechSynthesis.cancel()}catch(e){}
-  const qi=curQ(), Q=QUESTIONS[qi], redeem=G.phase==="redeem";
-  const ok=k>=0&&G.order[k].ok;
-  document.querySelectorAll(".ans").forEach((b,j)=>{b.disabled=true;if(G.order[j].ok)b.classList.add("right");else if(j===k)b.classList.add("wrong");});
-  let pts=0, detail="";
+  const qi=curQ(),Q=QUESTIONS[qi],redeem=G.phase==="redeem",t=T();
+  const secs=(Date.now()-G.qStart)/1000;
+  let pts=0,detail="";
   if(ok){
     if(redeem){pts=50;detail="+50 for fixing it!";}
     else{
-      G.streak++;G.best=Math.max(G.best,G.streak);
-      let base=100, speed=0, streakB=G.streak>=2?(G.streak-1)*20:0;
-      if(G.mode==="challenge") speed=Math.round(Math.max(0,G.timeLeft)/TIME*50);
-      pts=base+speed+streakB; if(G.dbl){pts*=2;}
-      if(qi>=BONUS_FROM) pts*=2;
-      detail=`+${pts} points`+(speed?` (incl. ${speed} speed bonus)`:"")+(streakB?` · 🔥 streak bonus +${streakB}`:"")+(qi>=BONUS_FROM?" · ⭐ bonus round x2":"");
+      t.streak++;t.best=Math.max(t.best,t.streak);
+      const speed=timed()?Math.round(Math.max(0,G.timeLeft)/TIME*50):0, streakB=t.streak>=2?(t.streak-1)*20:0;
+      pts=100+speed+streakB;if(qi>=BONUS_FROM)pts*=2;
+      detail=`+${pts} points`+(speed?` (incl. ${speed} speed bonus)`:"")+(streakB?` · 🔥 streak +${streakB}`:"")+(qi>=BONUS_FROM?" · ⭐ bonus x2":"");
     }
-    G.score+=pts; sfx.right();
+    t.score+=pts;sfx.right();
   }else{
-    if(!redeem) G.streak=0;
-    sfx.wrong(); $("#gameCard").classList.add("shake"); setTimeout(()=>$("#gameCard").classList.remove("shake"),400);
+    if(!redeem)t.streak=0;
+    sfx.wrong();$("#gameCard").classList.add("shake");setTimeout(()=>$("#gameCard").classList.remove("shake"),400);
     detail=redeem?"No points this time, but now you know why. Keep going!":"No points this time. Read why, then keep going!";
   }
-  if(redeem) G.redeem.push({qi,ok}); else G.results[qi]={ok,chosen:k>=0?G.order[k].t:"(time ran out)",time:(Date.now()-G.qStart)/1000};
-  const correct=Q.a[0];
-  $("#fbTitle").textContent=ok?["🎉 Correct!","✅ Spot on!","🌟 Brilliant!"][Math.floor(Math.random()*3)]:(k<0?"⏰ Time's up!":"❌ Not quite!");
-  $("#fbWhy").innerHTML=(ok?"":`The correct answer is <b>${esc(correct)}</b>. `)+esc(Q.why);
+  if(redeem) G.redeem.push({qi,ok});
+  else G.results[qi]={ok,chosen,time:secs,team:G.cur};
+  // achievements
+  if(ok){
+    if(redeem) unlock("fixer");
+    else{
+      unlock("sprout");
+      if(t.streak===3){unlock("hot");fireToast(t);}
+      if(t.streak===5){unlock("unstop");fireToast(t);}
+      if(secs<5) unlock("speed");
+      if(Q.type==="order") unlock("chain");
+      if([9,10,11].every(i=>G.results[i]&&G.results[i].ok)) unlock("bonus");
+    }
+  }
+  const correct=Q.a[0], who=teamMode()&&!redeem?`${t.av} ${t.n}: `:"";
+  $("#fbTitle").textContent=who+(ok?["🎉 Correct!","✅ Spot on!","🌟 Brilliant!"][Math.floor(Math.random()*3)]:(timeout?"⏰ Time's up!":"❌ Not quite!"));
+  $("#fbWhy").innerHTML=(ok?"":`The correct answer is <b>${esc(correct)}</b>. `)+esc(Q.why)+(ok&&!redeem?` <span style="white-space:nowrap">${Q.eco} joined your ecosystem!</span>`:"");
   $("#fbPts").textContent=detail;
-  $("#fbMascot").textContent=ok?(G.streak>=3?"🤩":"🦉"):(k<0?"⏰":"🤔");
+  $("#fbMascot").textContent=ok?(t.streak>=3?"🤩":"🦉"):(timeout?"⏰":"🤔");
+  const last=G.i+1>=G.queue.length;
+  const nt=teamMode()&&!redeem&&!last?G.teams[(G.i+1)%G.teams.length]:null;
+  $("#btnNext").textContent=last?"Finish ➜":nt?`Pass to ${nt.av} ➜`:"Next ➜";
   $("#fb").className="fb "+(ok?"ok":"no");
   document.documentElement.style.setProperty("--sheet",($("#fb").offsetHeight+28)+"px");
   document.body.classList.add("fb-open");
   buzz(ok?[30]:[60,40,60]);
-  if(pts>0){floatPts("+"+pts);}
-  countUp($("#hudScore"),G.score,700,"⭐ ");updateDots();
-  $("#hudStreak").hidden=G.streak<2; $("#hudStreak").textContent="🔥 x"+G.streak;
-  $("#btnNext").textContent=(G.i+1>=G.queue.length)?"Finish ➜":"Next ➜";
+  const scoreEl=teamMode()?$(`#tc${G.cur} .ts`):$("#hudScore");
+  if(pts>0)floatPts("+"+pts,scoreEl);
+  countUp(scoreEl,t.score,700,teamMode()?"":"⭐ ");
+  $("#hudStreak").hidden=t.streak<2;$("#hudStreak").textContent="🔥 x"+t.streak;
+  updateDots();renderEco($("#eco"),ok?qi:-1);
   $("#btnNext").focus({preventScroll:true});
-  setTimeout(()=>{const r=document.querySelector(".ans.right");if(r)r.scrollIntoView({behavior:"smooth",block:"center"});},120);
+  setTimeout(()=>{const r=document.querySelector(".ans.right")||document.querySelector("#slots");if(r)r.scrollIntoView({behavior:"smooth",block:"center"});},120);
   if(voiceOn) speak((ok?"Correct! ":"Not quite. The answer is "+correct+". ")+Q.why);
+  saveGame();
 }
 
 function next(){
+  if(!G||!G.answered)return;
   try{speechSynthesis.cancel()}catch(e){}
   G.i++;
   if(G.i<G.queue.length){renderQ();return;}
-  if(G.phase==="main"){
+  if(G.phase==="main"&&!teamMode()){
     const missed=G.results.map((r,i)=>r&&!r.ok?i:-1).filter(i=>i>=0);
-    if(missed.length){G.phase="redeemIntro";G.missed=missed;$("#missCount").textContent=missed.length;show("s-redeem");return;}
+    if(missed.length){G.phase="redeemIntro";G.missed=missed;$("#missCount").textContent=missed.length;saveGame();show("s-redeem");return;}
   }
   finish();
 }
-function startRedeem(){G.phase="redeem";G.queue=G.missed;G.i=0;show("s-game");renderQ();}
+function startRedeem(){G.phase="redeem";G.queue=G.missed;G.i=0;G.cur=0;show("s-game");renderQ();}
 
-/* lifelines */
-$("#l50").onclick=()=>{if(G.locked||!G.lifes.fifty)return;G.lifes.fifty=false;$("#l50").disabled=true;sfx.life();
-  const wrong=G.order.map((o,k)=>o.ok?-1:k).filter(k=>k>=0);shuffle(wrong).slice(0,2).forEach(k=>document.querySelectorAll(".ans")[k].classList.add("hide"));};
-$("#lHint").onclick=()=>{if(G.locked||!G.lifes.hint)return;G.lifes.hint=false;$("#lHint").disabled=true;sfx.life();
-  const h=$("#hintBox");h.textContent="💡 Hint: "+QUESTIONS[curQ()].hint;h.classList.add("show");if(voiceOn)speak(QUESTIONS[curQ()].hint);};
-$("#lTime").onclick=()=>{if(G.locked||!G.lifes.time||G.mode!=="challenge")return;G.lifes.time=false;$("#lTime").disabled=true;sfx.life();G.timeLeft=Math.min(TIME,G.timeLeft+15);updTimer();};
+/* ---------- Ecosystem, achievements, toasts ---------- */
+function ecoAlive(i){const r=G.results[i];return !!(r&&r.ok)||G.redeem.some(x=>x.qi===i&&x.ok);}
+function renderEco(el,fresh=-1){
+  el.innerHTML=QUESTIONS.map((Q,i)=>{const a=ecoAlive(i);return `<span class="${a?"alive"+(i===fresh?"":" idle"):""}" style="animation-delay:${a&&i!==fresh?-(i*.37)%3:0}s" title="${a?"Discovered!":"Not discovered yet"}">${Q.eco}</span>`;}).join("");
+}
+function toast(icon,title,sub,cls=""){
+  const d=document.createElement("div");d.className="toast "+cls;
+  d.innerHTML=`<span class="ti">${icon}</span><div><b>${esc(title)}</b><span>${esc(sub)}</span></div>`;
+  $("#toasts").appendChild(d);setTimeout(()=>d.remove(),3500);
+}
+function unlock(id){
+  if(G.ach.includes(id))return;G.ach.push(id);
+  const a=ACH.find(x=>x.id===id);
+  if(!achAll.includes(id)){achAll.push(id);store.set("es_ach",achAll);}
+  setTimeout(()=>{toast(a.i,"Badge unlocked: "+a.n,a.d);sfx.badge();},350);
+}
+function fireToast(t){toast("🔥","ON FIRE!",`${teamMode()?t.n+" has":"You have"} ${t.streak} correct in a row!`,"fire");sfx.fire();}
+function syncAch(){$("#achChip").textContent=`🏅 ${achAll.length}/${ACH.length} badges`;}
+
+/* lifelines (each team has its own set) */
+function useLife(key,name){const L=T().lifes;if(G.locked||!L[key])return false;L[key]=false;G.usedL.push(name);sfx.life();return true;}
+$("#l50").onclick=()=>{
+  if(!useLife("fifty","50:50"))return;$("#l50").disabled=true;
+  if(QUESTIONS[curQ()].type==="order"){G.pick=[0,1].map(k=>G.tiles.findIndex(x=>x.k===k));drawOrder();return;}
+  const wrong=G.order.map((o,k)=>o.ok?-1:k).filter(k=>k>=0);
+  shuffle(wrong).slice(0,2).forEach(k=>document.querySelectorAll(".ans")[k].classList.add("hide"));
+};
+$("#lHint").onclick=()=>{
+  if(!useLife("hint","Hint"))return;$("#lHint").disabled=true;
+  const h=$("#hintBox");h.textContent="💡 Hint: "+QUESTIONS[curQ()].hint;h.classList.add("show");if(voiceOn)speak(QUESTIONS[curQ()].hint);
+};
+$("#lTime").onclick=()=>{
+  if(!timed()||!useLife("time","+15s"))return;$("#lTime").disabled=true;
+  G.timeLeft=Math.min(TIME,G.timeLeft+15);updTimer();
+};
 
 /* ---------- Results ---------- */
 function finish(){
   clearInterval(timerId);
-  const first=G.results.filter(r=>r&&r.ok).length;
-  const fixed=G.redeem.filter(r=>r.ok).length;
-  const pct=Math.round(first/TOTAL*100);
+  G.phase="done";store.set("es_save",null);
+  const first=G.results.filter(r=>r&&r.ok).length, fixed=G.redeem.filter(r=>r.ok).length, pct=Math.round(first/TOTAL*100);
+  if(!G.usedL.length&&first>=6) unlock("solo");
+  if(first===TOTAL) unlock("perfect");
+  const ranked=G.teams.slice().sort((a,b)=>b.score-a.score), win=ranked[0];
+  G.best=Math.max(...G.teams.map(t=>t.best));
+  G.score=G.teams.reduce((a,t)=>a+t.score,0);
+  G.name=teamMode()?"Team Battle: "+G.teams.map(t=>t.n).join(", "):G.teams[0].n;
+  G.av=teamMode()?"👥":G.teams[0].av;
   const stars=pct>=90?3:pct>=60?2:pct>=30?1:0;
-  const badge=pct>=90?"🏆 Ecosystem Expert":pct>=60?"🦉 Food Web Wizard":pct>=30?"🐸 Rising Naturalist":"🌱 Seedling Explorer";
-  $("#rName").textContent=G.name+" · "+(G.mode==="challenge"?"⚡ Challenge":"🌱 Practice")+" mode";
-  $("#rAvatar").textContent=G.av||"🐸";
+  let badge=pct>=90?"🏆 Ecosystem Expert":pct>=60?"🦉 Food Web Wizard":pct>=30?"🐸 Rising Naturalist":"🌱 Seedling Explorer";
+  if(teamMode()){
+    const tie=ranked[1]&&ranked[1].score===win.score;
+    badge=tie?"🤝 It's a tie at the top!":`🏆 ${win.n} wins!`;
+    $("#rAvatar").textContent=tie?"🤝":win.av;
+    $("#rName").textContent="👥 Team Battle · class accuracy "+pct+"%";
+    $("#rPodium").innerHTML=ranked.map((t,k)=>`<div class="pod"><div class="pa">${t.av}</div><div class="pn">${["🥇","🥈","🥉","4th"][k]} ${esc(t.n)}</div><div class="pb" style="height:${[150,115,85,60][k]}px;animation-delay:${(.3+k*.15).toFixed(2)}s">${t.score}</div></div>`).join("");
+    $("#rPodium").hidden=false;
+    $("#rMsg").textContent=`The class got ${first} / ${TOTAL} right first time and brought ${first} species to life.`+(G.best>=3?` Best streak: 🔥${G.best}!`:"");
+  }else{
+    $("#rAvatar").textContent=G.av;
+    $("#rName").textContent=G.name+" · "+(G.mode==="challenge"?"⚡ Challenge":"🌱 Practice")+" mode";
+    $("#rPodium").hidden=true;
+    $("#rMsg").textContent=`You got ${first} / ${TOTAL} right first time`+(G.redeem.length?` and fixed ${fixed} of ${G.redeem.length} in the Second Chance round.`:".")+(G.best>=3?` Best streak: 🔥${G.best}!`:"");
+  }
+  const shown=teamMode()?win.score:G.score;
   $("#rScore").dataset.v=0;
   const ring=$("#rRing");ring.style.setProperty("--p",0);
-  setTimeout(()=>{countUp($("#rScore"),G.score,1100);ring.style.setProperty("--p",pct);},350);
+  setTimeout(()=>{countUp($("#rScore"),shown,1100);ring.style.setProperty("--p",pct);},350);
   $("#rStars").innerHTML=[0,1,2].map(i=>`<span class="st${i<stars?" on":""}" style="--d:${(0.9+i*.3).toFixed(2)}s">★</span>`).join("");
   $("#rBadge").textContent=badge;
-  $("#rMsg").textContent=`You got ${first} / ${TOTAL} right first time`+(G.redeem.length?` and fixed ${fixed} of ${G.redeem.length} in the Second Chance round.`:".")+(G.best>=3?` Best streak: 🔥${G.best}!`:"");
+  renderEco($("#rEco"));
+  $("#rAch").innerHTML=ACH.map(a=>`<div class="ach${achAll.includes(a.id)?" got":""}${G.ach.includes(a.id)?" new":""}"><i>${a.i}</i><b>${a.n}</b>${a.d}</div>`).join("");
   // mastery by topic
   const topics=[...new Set(QUESTIONS.map(q=>q.topic))];
-  $("#rBars").innerHTML=topics.map(t=>{const ids=QUESTIONS.map((q,i)=>q.topic===t?i:-1).filter(i=>i>=0);
+  $("#rBars").innerHTML=topics.map(tp=>{const ids=QUESTIONS.map((q,i)=>q.topic===tp?i:-1).filter(i=>i>=0);
     const c=ids.filter(i=>G.results[i]&&G.results[i].ok).length;const p=Math.round(c/ids.length*100);
-    return `<div class="bar"><i style="width:${p}%;background:${p>=70?"var(--green)":p>=40?"var(--gold)":"var(--red)"}"></i><span>${esc(t)}: ${c}/${ids.length} (${p}%)</span></div>`}).join("");
+    return `<div class="bar"><i style="width:${p}%;background:${p>=70?"var(--mint)":p>=40?"var(--gold)":"var(--coral)"}"></i><span>${esc(tp)}: ${c}/${ids.length} (${p}%)</span></div>`}).join("");
   $("#rReview").innerHTML=QUESTIONS.map((Q,i)=>{const r=G.results[i]||{};const rd=G.redeem.find(x=>x.qi===i);
+    const by=teamMode()&&r.team!=null?` · ${G.teams[r.team].av} ${esc(G.teams[r.team].n)}`:"";
     return `<div class="rv${r.ok?"":" no"}">${r.ok?"✅":"❌"} <b>Q${i+1}. ${esc(Q.q)}</b><span class="tag">${esc(Q.topic)}</span><br>
-      ${r.ok?"":`Your answer: ${esc(r.chosen||"-")} · `}Correct: <b>${esc(Q.a[0])}</b>${rd?(rd.ok?" · 🔁 fixed in Second Chance":" · 🔁 still to review"):""}<br>
+      ${r.ok?"":`Answer given: ${esc(r.chosen||"-")} · `}Correct: <b>${esc(Q.a[0])}</b>${by}${rd?(rd.ok?" · 🔁 fixed in Second Chance":" · 🔁 still to review"):""}<br>
       <span class="muted">${esc(Q.why)}</span></div>`}).join("");
-  buildReports(first,fixed,pct,topics);
+  buildReports(first,fixed,pct,topics,ranked);
   // save
-  const board=store.get("es_board",[]);board.push({n:G.name,a:G.av,m:G.mode,s:G.score,d:Date.now()});
+  const board=store.get("es_board",[]);
+  G.teams.forEach(t=>board.push({n:t.n,a:t.av,m:G.mode,s:t.score,d:Date.now()}));
   board.sort((a,b)=>b.s-a.s);store.set("es_board",board.slice(0,50));
   const att=store.get("es_attempts",[]);att.push({n:G.name,m:G.mode,s:G.score,r:G.results.map(r=>r&&r.ok?1:0),d:Date.now()});store.set("es_attempts",att.slice(-500));
   $("#copyMsg").textContent="";
-  show("s-results"); sfx.win(); if(stars>=2) confetti();
+  show("s-results");sfx.win();if(stars>=2||teamMode())confetti();
 }
 
-function buildReports(first,fixed,pct,topics){
+function buildReports(first,fixed,pct,topics,ranked){
   const date=new Date().toLocaleString("en-MY",{dateStyle:"medium",timeStyle:"short"});
   const tp=topics.map(t=>{const ids=QUESTIONS.map((q,i)=>q.topic===t?i:-1).filter(i=>i>=0);const c=ids.filter(i=>G.results[i]&&G.results[i].ok).length;return{t,c,n:ids.length,p:Math.round(c/ids.length*100)};});
   const missed=G.results.map((r,i)=>r&&!r.ok?i:-1).filter(i=>i>=0);
-  const strong=tp.filter(x=>x.p>=70), weak=tp.filter(x=>x.p<70);
+  const strong=tp.filter(x=>x.p>=70);
   const idea=i=>{const p=QUESTIONS[i].why.split(/(?<=\.)\s/);return esc(p[0].length<30?p.slice(0,2).join(" "):p[0]);};
   const tip=pct>=90?"Excellent! Try Challenge mode to beat your time and streak.":pct>=60?"Good job! Re-read the ideas above, then play again to lock them in.":"Keep going! Play Practice mode again and read each explanation slowly. Ask your teacher about the ideas above.";
+  const who=teamMode()?"Your class":`<b>${esc(G.av)} ${esc(G.name)}</b>, you`;
+  const standings=teamMode()?`<h4>🏆 Team standings</h4><ul>${ranked.map((t,k)=>`<li>${["🥇","🥈","🥉","4th"][k]} ${esc(t.av)} ${esc(t.n)}: <b>${t.score}</b> points</li>`).join("")}</ul>`:"";
   $("#repStudent").innerHTML=
-    `<p><b>${esc(G.av||"")} ${esc(G.name)}</b>, you got <b>${first} out of ${TOTAL}</b> right first time (${pct}%) and scored <b>${G.score}</b> points.${G.redeem.length?` You fixed ${fixed} of ${G.redeem.length} in the Second Chance round.`:""}</p>
-     <h4>💪 What you do well</h4>${strong.length?`<ul>${strong.map(x=>`<li>${esc(x.t)} (${x.c}/${x.n})</li>`).join("")}</ul>`:`<p class="muted">Every topic is still growing. That's okay!</p>`}
-     <h4>📚 Revise these ideas</h4>${missed.length?`<ul>${missed.map(i=>`<li><b>Q${i+1}:</b> ${idea(i)}</li>`).join("")}</ul>`:`<p>Nothing to revise. You answered everything correctly!</p>`}
-     <h4>🎯 Your next step</h4><p>${tip}</p>`;
-  const used=[G.lifes.fifty?null:"50:50",G.lifes.hint?null:"Hint",G.lifes.time?null:"+15s"].filter(Boolean);
+    `<p>${who} got <b>${first} out of ${TOTAL}</b> right first time (${pct}%)${teamMode()?"":` and scored <b>${G.score}</b> points`}.${G.redeem.length?` You fixed ${fixed} of ${G.redeem.length} in the Second Chance round.`:""}</p>
+     ${standings}
+     <h4>💪 What ${teamMode()?"the class does":"you do"} well</h4>${strong.length?`<ul>${strong.map(x=>`<li>${esc(x.t)} (${x.c}/${x.n})</li>`).join("")}</ul>`:`<p class="muted">Every topic is still growing. That's okay!</p>`}
+     <h4>📚 Revise these ideas</h4>${missed.length?`<ul>${missed.map(i=>`<li><b>Q${i+1}:</b> ${idea(i)}</li>`).join("")}</ul>`:`<p>Nothing to revise. Everything was answered correctly!</p>`}
+     <h4>🎯 Next step</h4><p>${tip}</p>`;
+  const used=[...new Set(G.usedL)];
   const times=G.results.filter(Boolean).map(r=>r.time||0), avgT=times.length?(times.reduce((a,b)=>a+b,0)/times.length).toFixed(1):"-";
   const focus=tp.slice().sort((a,b)=>a.p-b.p)[0];
+  const modeName={practice:"Practice",challenge:"Challenge",team:"Team Battle"}[G.mode];
   $("#repTeacher").innerHTML=
-    `<p><b>${esc(G.name)}</b> · ${G.mode==="challenge"?"Challenge":"Practice"} mode · ${esc(date)}</p>
+    `<p><b>${esc(G.name)}</b> · ${modeName} mode · ${esc(date)}</p>
      <h4>Summary</h4>
-     <ul><li>Score: <b>${G.score}</b> · First-try accuracy: <b>${first}/${TOTAL} (${pct}%)</b></li>
-     <li>Second Chance: ${G.redeem.length?`fixed ${fixed} of ${G.redeem.length}`:(missed.length?"skipped":"not needed")} · Best streak: ${G.best} · Average time per question: ${avgT}s</li>
-     <li>Lifelines used: ${used.length?used.join(", "):"none"}</li></ul>
+     <ul><li>${teamMode()?"Class total":"Score"}: <b>${G.score}</b> · First-try accuracy: <b>${first}/${TOTAL} (${pct}%)</b></li>
+     <li>Second Chance: ${teamMode()?"not used in Team Battle":G.redeem.length?`fixed ${fixed} of ${G.redeem.length}`:(missed.length?"skipped":"not needed")} · Best streak: ${G.best} · Average time per question: ${avgT}s</li>
+     <li>Lifelines used: ${used.length?used.join(", "):"none"}</li>
+     ${teamMode()?`<li>Teams: ${ranked.map(t=>`${esc(t.n)} ${t.score}`).join(" · ")}</li>`:""}</ul>
      <h4>Topic mastery</h4><ul>${tp.map(x=>`<li>${esc(x.t)}: ${x.c}/${x.n} (${x.p}%)</li>`).join("")}</ul>
      <h4>Possible misconceptions</h4>${missed.length?`<ul>${missed.map(i=>`<li><b>Q${i+1}</b> ${esc(QUESTIONS[i].q)}<br>Chose: <i>${esc(G.results[i].chosen||"-")}</i> · Correct: <b>${esc(QUESTIONS[i].a[0])}</b></li>`).join("")}</ul>`:`<p>None. All questions correct on the first try.</p>`}
-     <h4>Suggested follow-up</h4><p>${missed.length?`Reteach <b>${esc(focus.t)}</b> first (${focus.p}%). Use a quick oral check or a mini whiteboard task on: ${missed.slice(0,3).map(i=>"Q"+(i+1)).join(", ")}.`:`Extend learning: ask the student to draw a food web with two interactions (mutualism, parasitism) from their own neighbourhood.`}</p>
-     <h4>Question detail</h4><div class="scroll"><table><thead><tr><th>Q</th><th>Result</th><th>Answer chosen</th><th>Time</th></tr></thead><tbody>${QUESTIONS.map((Q,i)=>{const r=G.results[i]||{};return `<tr><td>${i+1}</td><td>${r.ok?"✅":"❌"}</td><td>${esc(r.chosen||"-")}</td><td>${r.time?r.time.toFixed(1)+"s":"-"}</td></tr>`}).join("")}</tbody></table></div>`;
-  G.summary=`Ecosystem Showdown report\nName: ${G.name}\nDate: ${date}\nMode: ${G.mode}\nScore: ${G.score}\nFirst try: ${first}/${TOTAL} (${pct}%)\nSecond Chance fixed: ${fixed}/${G.redeem.length}\nMissed first time: ${missed.map(i=>"Q"+(i+1)).join(", ")||"none"}\nWeakest topic: ${focus.t} (${focus.p}%)`;
+     <h4>Suggested follow-up</h4><p>${missed.length?`Reteach <b>${esc(focus.t)}</b> first (${focus.p}%). Use a quick oral check or a mini whiteboard task on: ${missed.slice(0,3).map(i=>"Q"+(i+1)).join(", ")}.`:`Extend learning: ask students to draw a food web with two interactions (mutualism, parasitism) from their own neighbourhood.`}</p>
+     <h4>Question detail</h4><div class="scroll"><table><thead><tr><th>Q</th><th>Result</th>${teamMode()?"<th>Team</th>":""}<th>Answer chosen</th><th>Time</th></tr></thead><tbody>${QUESTIONS.map((Q,i)=>{const r=G.results[i]||{};return `<tr><td>${i+1}</td><td>${r.ok?"✅":"❌"}</td>${teamMode()?`<td>${r.team!=null?esc(G.teams[r.team].n):"-"}</td>`:""}<td>${esc(r.chosen||"-")}</td><td>${r.time?r.time.toFixed(1)+"s":"-"}</td></tr>`}).join("")}</tbody></table></div>`;
+  G.summary=`Ecosystem Showdown report\nName: ${G.name}\nDate: ${date}\nMode: ${modeName}\nScore: ${G.score}\nFirst try: ${first}/${TOTAL} (${pct}%)\nSecond Chance fixed: ${fixed}/${G.redeem.length}\nMissed first time: ${missed.map(i=>"Q"+(i+1)).join(", ")||"none"}\nWeakest topic: ${focus.t} (${focus.p}%)`+(teamMode()?`\nTeams: ${ranked.map(t=>t.n+" "+t.score).join(", ")}`:"");
   setTab("stu");
 }
 function setTab(w){const s=w==="stu";$("#repStudent").hidden=!s;$("#repTeacher").hidden=s;
-  [["#tabStu",s],["#tabTea",!s]].forEach(([id,on])=>{$(id).classList.toggle("sel",on);$(id).setAttribute("aria-selected",on);});}
+  [["#tabStu",s],["#tabTea",!s]].forEach(([id,on])=>{$(id).classList.toggle("sel",on);$(id).setAttribute("aria-selected",on);});
+  $("#tabStu").textContent=G&&teamMode()?"🎒 Class report":"🎒 Student report";}
 
 function renderBoard(){
   const b=store.get("es_board",[]).slice(0,10);
-  $("#boardBody").innerHTML=b.length?b.map((r,i)=>`<tr class="${i===0?"top1":""}"><td>${["🥇","🥈","🥉"][i]||i+1}</td><td>${esc(r.a||"🐸")} ${esc(r.n)}</td><td>${r.m==="challenge"?"⚡":"🌱"}</td><td><b>${r.s}</b></td></tr>`).join("")
+  const icon={challenge:"⚡",practice:"🌱",team:"👥"};
+  $("#boardBody").innerHTML=b.length?b.map((r,i)=>`<tr class="${i===0?"top1":""}"><td>${["🥇","🥈","🥉"][i]||i+1}</td><td>${esc(r.a||"🐸")} ${esc(r.n)}</td><td>${icon[r.m]||"🌱"}</td><td><b>${r.s}</b></td></tr>`).join("")
     :`<tr><td colspan="4" class="muted">No scores yet. Be the first!</td></tr>`;
   show("s-board");
 }
@@ -751,42 +1083,65 @@ function renderTeacher(){
   const acc=QUESTIONS.map((_,i)=>n?Math.round(att.reduce((a,x)=>a+(x.r[i]||0),0)/n*100):0);
   const overall=n?Math.round(acc.reduce((a,b)=>a+b,0)/TOTAL):0;
   $("#tSummary").innerHTML=`<div class="stat"><b>${n}</b><span>🎮 Games played</span></div><div class="stat"><b>${avg}</b><span>⭐ Average score</span></div><div class="stat"><b>${overall}%</b><span>🎯 Average accuracy</span></div>`;
-  $("#tBars").innerHTML=QUESTIONS.map((Q,i)=>`<div class="bar" title="${esc(Q.q)}"><i style="width:${acc[i]}%;background:${acc[i]>=70?"var(--green)":acc[i]>=40?"var(--gold)":"var(--red)"}"></i><span>Q${i+1} · ${esc(Q.a[0])} · ${n?acc[i]+"%":"no data"}</span></div>`).join("");
+  $("#tBars").innerHTML=QUESTIONS.map((Q,i)=>`<div class="bar" title="${esc(Q.q)}"><i style="width:${acc[i]}%;background:${acc[i]>=70?"var(--mint)":acc[i]>=40?"var(--gold)":"var(--coral)"}"></i><span>Q${i+1} · ${esc(Q.type==="order"?"Food-chain puzzle":Q.a[0])} · ${n?acc[i]+"%":"no data"}</span></div>`).join("");
   if(n){const worst=acc.indexOf(Math.min(...acc));const Q=QUESTIONS[worst];
     $("#tFocus").innerHTML=`<b>🎯 Reteach first:</b> Q${worst+1} (${acc[worst]}% correct). "${esc(Q.q)}"<br>Key idea: ${esc(Q.why)}`;}
   else $("#tFocus").textContent="No games played yet on this device. Results appear here after students finish a game.";
   show("s-teacher");
 }
 
+/* ---------- Start screen: modes, avatars, teams ---------- */
+function setMode(m){
+  mode=m;
+  document.querySelectorAll(".mode").forEach(x=>{const on=x.dataset.mode===m;x.classList.toggle("sel",on);x.setAttribute("aria-checked",on);});
+  $("#soloSetup").hidden=m==="team";$("#teamSetup").hidden=m!=="team";
+  if(m==="team")renderTeamNames();
+}
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{setMode(b.dataset.mode);sfx.tap();});
+function renderTeamNames(){
+  document.querySelectorAll(".tc").forEach(x=>{const on=+x.dataset.n===teamN;x.classList.toggle("sel",on);x.setAttribute("aria-checked",on);});
+  $("#teamNames").innerHTML=TEAMS.slice(0,teamN).map((t,k)=>`<label><span>${t.av}</span><input data-k="${k}" maxlength="20" value="${esc(teamNames[k]||t.n)}" aria-label="Team ${k+1} name"></label>`).join("");
+  document.querySelectorAll("#teamNames input").forEach(inp=>inp.oninput=()=>{teamNames[+inp.dataset.k]=inp.value;store.set("es_teamNames",teamNames);});
+}
+document.querySelectorAll(".tc").forEach(b=>b.onclick=()=>{teamN=+b.dataset.n;store.set("es_teamN",teamN);sfx.tap();renderTeamNames();});
+document.querySelectorAll(".av").forEach(b=>{b.onclick=()=>{avatar=b.dataset.av;store.set("es_avatar",avatar);sfx.tap();syncAvatars();};});
+function syncAvatars(){document.querySelectorAll(".av").forEach(x=>{const on=x.dataset.av===avatar;x.classList.toggle("sel",on);x.setAttribute("aria-checked",on);});}
+
 /* ---------- Wire up ---------- */
 $("#btnStart").onclick=startGame;
 $("#btnHow").onclick=()=>$("#how").classList.toggle("open");
 $("#tabStu").onclick=()=>setTab("stu");$("#tabTea").onclick=()=>setTab("tea");$("#btnPrint").onclick=()=>window.print();
-$("#btnQuit").onclick=()=>{if(confirm("Quit this game and go back to the menu?")){clearInterval(timerId);try{speechSynthesis.cancel()}catch(e){}show("s-start");}};
-document.querySelectorAll(".av").forEach(b=>{b.onclick=()=>{avatar=b.dataset.av;store.set("es_avatar",avatar);syncAvatars();};});
-function syncAvatars(){document.querySelectorAll(".av").forEach(x=>{const on=x.dataset.av===avatar;x.classList.toggle("sel",on);x.setAttribute("aria-checked",on);});}
-syncAvatars();$("#name").value=store.get("es_name","");
-mode=store.get("es_mode","practice")==="challenge"?"challenge":"practice";
-document.querySelectorAll(".mode").forEach(x=>{const on=x.dataset.mode===mode;x.classList.toggle("sel",on);x.setAttribute("aria-checked",on);});
+$("#btnQuit").onclick=goHome;$("#btnRedeemHome").onclick=goHome;$("#btnResume").onclick=resumeGame;
 $("#btnNext").onclick=next;
 $("#btnRedeem").onclick=startRedeem;
 $("#btnSkipRedeem").onclick=finish;
-$("#btnAgain").onclick=()=>show("s-start");
-$("#btnBoard").onclick=renderBoard; $("#btnBoard2").onclick=renderBoard;
+$("#btnAgain").onclick=goHome;
+$("#btnBoard").onclick=renderBoard;$("#btnBoard2").onclick=renderBoard;
 $("#btnTeacher").onclick=renderTeacher;
-$("#btnReset").onclick=()=>{if(confirm("Clear all class results and the leaderboard on this device?")){store.set("es_attempts",[]);store.set("es_board",[]);renderTeacher();}};
+$("#btnReset").onclick=()=>{if(confirm("Clear all class results, badges and the leaderboard on this device?")){store.set("es_attempts",[]);store.set("es_board",[]);achAll=[];store.set("es_ach",[]);syncAch();renderTeacher();}};
 $("#btnCopy").onclick=async()=>{try{await navigator.clipboard.writeText(G.summary);$("#copyMsg").textContent="Copied! Paste it into Google Classroom or WhatsApp for your teacher.";}
   catch(e){$("#copyMsg").textContent=G.summary;}};
-$("#btnSpeak").onclick=()=>{const Q=QUESTIONS[curQ()];speak(Q.q+". "+G.order.map(o=>o.t).join(", "));};
+$("#btnSpeak").onclick=()=>speak(readText());
 $("#btnSound").onclick=()=>{soundOn=!soundOn;store.set("es_sound",soundOn);syncToggles();};
 $("#btnVoice").onclick=()=>{voiceOn=!voiceOn;store.set("es_voice",voiceOn);syncToggles();if(!voiceOn)try{speechSynthesis.cancel()}catch(e){}};
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
 document.addEventListener("keydown",e=>{
-  if(!$("#s-game").classList.contains("active")) return;
-  if(!G.locked&&["1","2","3","4"].includes(e.key)){const b=document.querySelectorAll(".ans")[+e.key-1];if(b&&!b.classList.contains("hide"))choose(+e.key-1);}
-  else if(G.locked&&e.key==="Enter"){e.preventDefault();next();}
+  if(!$("#s-game").classList.contains("active")||!G)return;
+  if(!$("#overlay").hidden)return;
+  const order=QUESTIONS[curQ()].type==="order";
+  if(!G.locked&&/^[1-9]$/.test(e.key)){
+    const k=+e.key-1;
+    if(order) pickTile(k);
+    else{const b=document.querySelectorAll(".ans")[k];if(b&&!b.classList.contains("hide"))choose(k);}
+  }else if(e.key==="Enter"){
+    if(G.answered){e.preventDefault();next();}
+    else if(order&&!G.locked){e.preventDefault();checkOrder();}
+  }
 });
-syncToggles();
+$("#name").value=store.get("es_name","");
+syncAvatars();syncAch();syncToggles();syncResume();
+setMode(["practice","challenge","team"].includes(store.get("es_mode","practice"))?store.get("es_mode","practice"):"practice");
+
 </script>
 </body>
 </html>

@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ecosystem Showdown</title>
+<meta name="description" content="A gamified Form 2 Science revision quiz on ecosystems: food chains, food webs and interactions between organisms.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1b3d; --bg2:#1b2d63; --card:#16264f; --card2:#21356b;
+    --gold:#ffc93c; --pink:#ff4f8b; --green:#22c55e; --red:#ef4444; --blue:#38bdf8;
+    --text:#f4f6ff; --muted:#a9b4d6;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{
+    font-family:"Baloo 2",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--text);
+    background:radial-gradient(circle at 50% -10%,#2b4aa0 0%,var(--bg) 60%) fixed, var(--bg);
+    padding:16px;
+  }
+  .wrap{max-width:780px;margin:0 auto}
+  .screen{display:none}
+  .screen.active{display:block;animation:pop .25s ease-out}
+  @keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .card{background:var(--card);border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.06)}
+  h1{font-size:clamp(34px,7vw,56px);line-height:1;margin:6px 0 4px;color:var(--gold);text-shadow:0 4px 0 #b7791f}
+  h2{margin:0 0 8px;font-size:26px}
+  p{margin:6px 0}
+  .muted{color:var(--muted)}
+  .center{text-align:center}
+  .btn{
+    font:inherit;font-weight:800;font-size:18px;border:0;border-radius:14px;padding:12px 20px;cursor:pointer;
+    background:var(--gold);color:#3b2600;box-shadow:0 5px 0 #b7791f;transition:transform .08s;
+  }
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 #b7791f}
+  .btn.secondary{background:var(--card2);color:var(--text);box-shadow:0 5px 0 #0b1430}
+  .btn.pink{background:var(--pink);color:#fff;box-shadow:0 5px 0 #a8164c}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .row.center{justify-content:center}
+  input[type=text]{font:inherit;font-size:20px;padding:10px 14px;border-radius:12px;border:2px solid var(--card2);background:#0c1633;color:var(--text);width:100%;max-width:340px}
+  .modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+  .mode{background:var(--card2);border:3px solid transparent;border-radius:16px;padding:14px;cursor:pointer;text-align:left;color:var(--text);font:inherit}
+  .mode.sel{border-color:var(--gold);background:#2a3f7d}
+  .mode b{font-size:20px;display:block}
+  .mode span{font-size:15px;color:var(--muted)}
+  /* HUD */
+  .hud{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .pill{background:var(--card2);border-radius:999px;padding:4px 14px;font-weight:700;font-size:17px;white-space:nowrap}
+  .pill.gold{background:var(--gold);color:#3b2600}
+  .pill.fire{background:#f97316}
+  .timer{height:12px;background:#0c1633;border-radius:99px;overflow:hidden;margin-bottom:12px}
+  .timer i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--green),var(--gold));transition:width .1s linear}
+  .timer.low i{background:var(--red)}
+  .bonus{background:linear-gradient(90deg,var(--pink),#a855f7);border-radius:12px;padding:6px 12px;text-align:center;font-weight:800;margin-bottom:10px;letter-spacing:.5px}
+  .scene{background:#0c1633;border-radius:16px;overflow:hidden;line-height:0;margin-bottom:12px}
+  .scene svg{width:100%;height:auto;display:block}
+  .q{font-size:clamp(20px,4.2vw,26px);font-weight:800;line-height:1.25;display:flex;gap:10px;align-items:flex-start}
+  .speak{flex:none;font-size:20px;background:var(--card2);border:0;border-radius:10px;padding:4px 10px;cursor:pointer;color:var(--text)}
+  .answers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+  .ans{font:inherit;font-size:19px;font-weight:700;text-align:left;padding:14px;border-radius:14px;border:0;cursor:pointer;color:#fff;display:flex;gap:10px;align-items:center;min-height:64px;box-shadow:0 5px 0 rgba(0,0,0,.35);transition:transform .08s,opacity .2s}
+  .ans:active{transform:translateY(3px)}
+  .ans .k{background:rgba(0,0,0,.25);border-radius:8px;padding:0 9px;font-size:16px}
+  .ans:nth-child(1){background:#e11d48}.ans:nth-child(2){background:#2563eb}.ans:nth-child(3){background:#d97706}.ans:nth-child(4){background:#16a34a}
+  .ans.hide{opacity:.15;pointer-events:none}
+  .ans.right{outline:4px solid #fff;box-shadow:0 0 0 8px var(--green)}
+  .ans.wrong{opacity:.45}
+  .lifelines{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .life{font:inherit;font-weight:700;font-size:15px;border:2px dashed var(--gold);background:transparent;color:var(--gold);border-radius:12px;padding:6px 12px;cursor:pointer}
+  .life:disabled{opacity:.3;cursor:not-allowed;text-decoration:line-through}
+  .hint{background:#0c1633;border-left:4px solid var(--gold);padding:8px 12px;border-radius:8px;margin-top:10px;display:none}
+  /* feedback */
+  .fb{border-radius:16px;padding:16px;margin-top:12px;display:none}
+  .fb.ok{display:block;background:rgba(34,197,94,.15);border:2px solid var(--green)}
+  .fb.no{display:block;background:rgba(239,68,68,.13);border:2px solid var(--red)}
+  .fb h3{margin:0 0 4px;font-size:24px}
+  .fb .why{font-size:18px}
+  .fb .pts{font-weight:800;color:var(--gold)}
+  /* results */
+  .big{font-size:56px;font-weight:800;color:var(--gold);line-height:1}
+  .stars{font-size:40px;letter-spacing:4px}
+  .bars{display:grid;gap:8px;margin:10px 0}
+  .bar{background:#0c1633;border-radius:10px;overflow:hidden;position:relative;height:30px}
+  .bar i{display:block;height:100%;background:var(--green)}
+  .bar span{position:absolute;inset:0;display:flex;align-items:center;padding:0 10px;font-weight:700;font-size:15px}
+  table{width:100%;border-collapse:collapse;font-size:16px}
+  th,td{padding:6px 8px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}
+  th{color:var(--muted);font-weight:700}
+  .review{display:grid;gap:8px;margin-top:8px}
+  .rv{background:#0c1633;border-radius:12px;padding:10px 12px;font-size:16px}
+  .rv b{font-size:17px}
+  .tag{display:inline-block;font-size:13px;border-radius:99px;padding:0 8px;margin-left:6px;background:var(--card2);color:var(--muted)}
+  .sec{margin-top:18px}
+  .toggles{position:fixed;top:10px;right:10px;display:flex;gap:6px;z-index:5}
+  .toggles button{font-size:18px;background:var(--card);border:2px solid var(--card2);color:var(--text);border-radius:10px;padding:2px 8px;cursor:pointer}
+  .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9}
+  .confetti i{position:absolute;top:-20px;width:10px;height:14px;border-radius:2px;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+  .shake{animation:shake .35s}
+  @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  footer{margin-top:16px;text-align:center;font-size:13px;color:var(--muted)}
+  @media (max-width:560px){
+    .answers,.modes{grid-template-columns:1fr}
+    .card{padding:14px}
+  }
+</style>
+</head>
+<body>
+<div class="toggles">
+  <button id="btnSound" title="Sound effects on/off" aria-label="Sound on/off">🔊</button>
+  <button id="btnVoice" title="Auto read-aloud on/off" aria-label="Read aloud on/off">🗣️</button>
+</div>
+<div class="wrap">
+
+  <!-- START -->
+  <section id="s-start" class="screen active">
+    <div class="card center">
+      <div style="font-size:54px">🌿🐸🦉</div>
+      <h1>Ecosystem Showdown</h1>
+      <p class="muted">Form 2 Science · Revision Game · Food chains, food webs &amp; interactions</p>
+      <div class="sec">
+        <label for="name"><b>Your name or team name</b></label><br>
+        <input id="name" type="text" maxlength="20" placeholder="e.g. Team Harimau" autocomplete="off">
+      </div>
+      <div class="modes" role="radiogroup" aria-label="Game mode">
+        <button class="mode sel" data-mode="practice" role="radio" aria-checked="true">
+          <b>🌱 Practice mode</b><span>No timer. Take your time. Great for warming up.</span>
+        </button>
+        <button class="mode" data-mode="challenge" role="radio" aria-checked="false">
+          <b>⚡ Challenge mode</b><span>30 seconds per question. Answer fast for bonus points!</span>
+        </button>
+      </div>
+      <div class="row center">
+        <button class="btn" id="btnStart">▶ Start game</button>
+        <button class="btn secondary" id="btnHow">How to play</button>
+      </div>
+      <div id="how" class="hint" style="text-align:left">
+        <p>• 12 questions. Each correct answer = <b>100 points</b>.</p>
+        <p>• Get answers right in a row to build a <b>🔥 streak</b> (+20 points per streak level).</p>
+        <p>• Three <b>lifelines</b>, one use each: <b>50:50</b>, <b>Hint</b> and <b>+15s</b> (Challenge mode).</p>
+        <p>• Questions 10–12 are the <b>BONUS ROUND</b>: double points!</p>
+        <p>• Missed some? You get a <b>Second Chance</b> round at the end. Mistakes help you learn!</p>
+        <p>• Press 🔈 to hear the question read aloud. Keys 1–4 also choose answers.</p>
+      </div>
+      <div class="row center sec">
+        <button class="btn secondary" id="btnBoard">🏆 Leaderboard</button>
+        <button class="btn secondary" id="btnTeacher">📊 Teacher view</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUESTION -->
+  <section id="s-game" class="screen">
+    <div class="card" id="gameCard">
+      <div class="hud">
+        <span class="pill" id="hudQ">Q 1 / 12</span>
+        <span class="pill fire" id="hudStreak" hidden>🔥 x0</span>
+        <span class="pill gold" id="hudScore">⭐ 0</span>
+      </div>
+      <div class="timer" id="timer"><i id="timerBar"></i></div>
+      <div class="bonus" id="bonus" hidden>⭐ BONUS ROUND · DOUBLE POINTS ⭐</div>
+      <div class="scene" id="scene"></div>
+      <div class="q"><button class="speak" id="btnSpeak" title="Read the question aloud" aria-label="Read aloud">🔈</button><span id="qText"></span></div>
+      <div class="answers" id="answers"></div>
+      <div class="lifelines" id="lifelines">
+        <button class="life" id="l50">✂️ 50:50</button>
+        <button class="life" id="lHint">💡 Hint</button>
+        <button class="life" id="lTime">⏱️ +15s</button>
+      </div>
+      <div class="hint" id="hintBox"></div>
+      <div class="fb" id="fb">
+        <h3 id="fbTitle"></h3>
+        <p class="why" id="fbWhy"></p>
+        <p class="pts" id="fbPts"></p>
+        <div class="row" style="justify-content:flex-end"><button class="btn" id="btnNext">Next ➜</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECOND CHANCE INTRO -->
+  <section id="s-redeem" class="screen">
+    <div class="card center">
+      <div style="font-size:54px">🔁</div>
+      <h2>Second Chance Round!</h2>
+      <p>You missed <b id="missCount">0</b> question(s). Try them again with no timer. Each fix earns <b>50 points</b>.</p>
+      <p class="muted">Read the explanation you saw earlier. It's okay to make mistakes. That's how we learn!</p>
+      <div class="row center sec">
+        <button class="btn" id="btnRedeem">Let's fix them!</button>
+        <button class="btn secondary" id="btnSkipRedeem">Skip to results</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="s-results" class="screen">
+    <div class="card">
+      <div class="center">
+        <p class="muted" id="rName"></p>
+        <div class="big" id="rScore">0</div>
+        <p class="muted">points</p>
+        <div class="stars" id="rStars"></div>
+        <h2 id="rBadge"></h2>
+        <p id="rMsg"></p>
+      </div>
+      <div class="sec">
+        <h3>My mastery</h3>
+        <div class="bars" id="rBars"></div>
+      </div>
+      <div class="sec">
+        <h3>Answer review</h3>
+        <div class="review" id="rReview"></div>
+      </div>
+      <div class="row center sec">
+        <button class="btn" id="btnAgain">🔄 Play again</button>
+        <button class="btn pink" id="btnCopy">📋 Copy my results for teacher</button>
+        <button class="btn secondary" id="btnBoard2">🏆 Leaderboard</button>
+      </div>
+      <p class="center muted" id="copyMsg"></p>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD -->
+  <section id="s-board" class="screen">
+    <div class="card">
+      <h2>🏆 Class Leaderboard</h2>
+      <p class="muted">Top 10 scores played on this device.</p>
+      <table><thead><tr><th>#</th><th>Name</th><th>Mode</th><th>Score</th></tr></thead><tbody id="boardBody"></tbody></table>
+      <div class="row center sec"><button class="btn" data-go="s-start">⬅ Back</button></div>
+    </div>
+  </section>
+
+  <!-- TEACHER -->
+  <section id="s-teacher" class="screen">
+    <div class="card">
+      <h2>📊 Teacher View</h2>
+      <p class="muted">Class results from every game played on this device. Use it to spot misconceptions and reteach.</p>
+      <div id="tSummary" class="row" style="gap:8px;margin:10px 0"></div>
+      <h3>First-try accuracy by question</h3>
+      <div class="bars" id="tBars"></div>
+      <div id="tFocus" class="hint" style="display:block"></div>
+      <div class="row center sec">
+        <button class="btn" data-go="s-start">⬅ Back</button>
+        <button class="btn secondary" id="btnReset">🗑️ Clear class data</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>Ecosystem Showdown · Form 2 Science revision prototype · Illustrations made with emoji, no copyrighted images</footer>
+</div>
+<div class="confetti" id="confetti"></div>
+
+<script>
+/* ---------- Illustrations (original SVG scenes built from emoji) ---------- */
+const E=(x,y,e,s=48,label)=>`<text x="${x}" y="${y}" font-size="${s}" text-anchor="middle" dominant-baseline="central">${e}</text>`+
+  (label?`<text x="${x}" y="${y+s/2+14}" font-size="14" fill="#fff" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="700">${label}</text>`:"");
+const A=(x1,y1,x2,y2,c="#ffc93c")=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="4" marker-end="url(#ah)"/>`;
+const SKY=(top="#7dd3fc",bot="#e0f2fe",ground="#65a30d")=>`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bot}"/></linearGradient><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ffc93c"/></marker></defs><rect width="400" height="200" fill="url(#sk)"/>`+(ground?`<rect y="150" width="400" height="50" fill="${ground}"/>`:"");
+const svg=c=>`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="img">${c}</svg>`;
+const DARK=`<rect width="400" height="200" fill="#1e3a5f"/>`;
+
+/* ---------- Questions ---------- */
+const QUESTIONS=[
+ {topic:"Food chains & webs", q:"Which organism is the PRODUCER in this food chain?",
+  a:["Grass","Grasshopper","Frog","Snake"], hint:"A producer makes its own food using sunlight.",
+  why:"Grass is the producer. It makes its own food by photosynthesis, using energy from the Sun. Every other organism in the chain is a consumer.",
+  scene:()=>svg(SKY()+E(55,110,"🌾",50)+A(85,110,120,110)+E(150,110,"🦗",44)+A(180,110,215,110)+E(245,110,"🐸",44)+A(275,110,310,110)+E(340,110,"🐍",48)+`<text x="200" y="185" font-size="15" fill="#fff" text-anchor="middle" font-family="Baloo 2" font-weight="700">Arrows show who is eaten by whom (energy flow)</text>`)},
+ {topic:"Food chains & webs", q:"What is the main source of energy for every food chain?",
+  a:["The Sun","Soil","Water","Wind"], hint:"Plants need it for photosynthesis.",
+  why:"The Sun. Producers capture light energy from the Sun during photosynthesis. That energy then passes to every consumer along the food chain.",
+  scene:()=>svg(SKY("#fde68a","#fff7ed")+`<g stroke="#f59e0b" stroke-width="4" opacity=".7"><line x1="80" y1="60" x2="180" y2="140"/><line x1="80" y1="60" x2="250" y2="130"/><line x1="80" y1="60" x2="320" y2="140"/></g>`+E(80,55,"☀️",70)+E(190,150,"🌿",40)+E(260,145,"🌳",56)+E(330,150,"🌻",40))},
+ {topic:"Food chains & webs", q:"Grass → Grasshopper → Frog → Snake. Which organism is the SECONDARY consumer?",
+  a:["Frog","Grasshopper","Snake","Grass"], hint:"It eats the primary consumer.",
+  why:"The frog. The grasshopper is the primary consumer because it eats the producer. The frog eats the grasshopper, so it is the secondary consumer. The snake is the tertiary consumer.",
+  scene:()=>svg(SKY()+E(55,95,"🌾",44,"Producer")+A(85,95,120,95)+E(150,95,"🦗",40,"Primary")+A(180,95,215,95)+E(245,95,"🐸",40,"?")+A(275,95,310,95)+E(340,95,"🐍",44,"Tertiary"))},
+ {topic:"Food chains & webs", q:"A tiger hunts and eats deer. What type of consumer is the tiger?",
+  a:["Carnivore","Herbivore","Omnivore","Producer"], hint:"It eats only other animals.",
+  why:"A carnivore eats only other animals. A herbivore eats only plants, and an omnivore eats both plants and animals.",
+  scene:()=>svg(SKY("#fcd34d","#fef3c7","#a16207")+E(110,120,"🐅",80)+`<text x="200" y="110" font-size="40" text-anchor="middle">💨</text>`+E(300,120,"🦌",72))},
+ {topic:"Food chains & webs", q:"Which organism breaks down dead plants and animals?",
+  a:["Mushroom","Rabbit","Paddy plant","Hawk"], hint:"Think about fungi.",
+  why:"Mushrooms are fungi, which are decomposers. They break down dead organisms and return nutrients to the soil, so plants can use them again.",
+  scene:()=>svg(SKY("#94a3b8","#e2e8f0","#78350f")+`<rect x="60" y="120" width="280" height="38" rx="18" fill="#92400e"/><circle cx="72" cy="139" r="16" fill="#b45309"/>`+E(130,105,"🍄",44)+E(210,108,"🍄",36)+E(280,104,"🍄",46)+E(170,170,"🍂",26)+E(320,172,"🍂",24))},
+ {topic:"Food chains & webs", q:"Many food chains linked together, like in the picture, form a…",
+  a:["Food web","Habitat","Population","Niche"], hint:"It looks like a spider's web of feeding links.",
+  why:"A food web is made of many food chains linked together. It shows that most animals eat, and are eaten by, more than one kind of organism.",
+  scene:()=>svg(SKY("#a7f3d0","#ecfdf5","#4d7c0f")+E(200,165,"🌾",34)+E(80,110,"🦗",34)+E(200,105,"🐇",34)+E(320,110,"🐛",34)+E(120,40,"🐸",32)+E(280,40,"🐍",34)+E(200,30,"🦅",34)+
+   A(195,150,90,125)+A(200,150,200,125)+A(205,150,310,125)+A(85,95,115,58)+A(310,95,285,58)+A(215,95,275,52)+A(130,40,262,40)+A(290,28,218,28))},
+ {topic:"Food chains & webs", q:"In this paddy field, all the frogs die. What will most likely happen to the grasshoppers?",
+  a:["Their number increases","Their number decreases","Their number stays the same","They all die"], hint:"Who eats the grasshoppers?",
+  why:"Their number increases. Frogs eat grasshoppers. With no frogs, fewer grasshoppers are eaten, so more of them survive and breed, at least until their food (the paddy) runs short.",
+  scene:()=>svg(SKY("#7dd3fc","#e0f2fe","#3f6212")+E(50,140,"🌾",40)+E(110,145,"🌾",40)+E(290,145,"🌾",40)+E(350,140,"🌾",40)+E(150,95,"🦗",30)+E(240,85,"🦗",30)+E(320,95,"🦗",30)+E(200,135,"🐸",54)+`<text x="200" y="135" font-size="80" fill="#ef4444" text-anchor="middle" dominant-baseline="central" font-family="Arial" font-weight="900">✕</text>`)},
+ {topic:"Interactions", q:"Bees get nectar from flowers and help the flowers pollinate. This interaction is…",
+  a:["Mutualism","Parasitism","Commensalism","Predation"], hint:"Both organisms get something good.",
+  why:"Mutualism: both organisms benefit. The bee gets food (nectar) and the flower gets its pollen carried to other flowers.",
+  scene:()=>svg(SKY("#fbcfe8","#fdf2f8","#65a30d")+E(120,120,"🌸",70)+E(280,120,"🌼",70)+E(200,60,"🐝",50)+`<path d="M140 80 Q200 20 260 80" stroke="#fff" stroke-width="3" fill="none" stroke-dasharray="6 6"/>`+`<text x="70" y="40" font-size="16" fill="#9d174d" font-family="Baloo 2" font-weight="800">🐝 gets food ✔</text><text x="245" y="40" font-size="16" fill="#9d174d" font-family="Baloo 2" font-weight="800">🌸 gets pollinated ✔</text>`)},
+ {topic:"Interactions", q:"A remora fish sticks to a shark and eats its leftover food. The shark is not harmed. This is…",
+  a:["Commensalism","Mutualism","Parasitism","Competition"], hint:"One benefits; the other is neither helped nor harmed.",
+  why:"Commensalism: one organism benefits (the remora gets food and free transport) while the other (the shark) is not helped or harmed.",
+  scene:()=>svg(`<defs><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#0c4a6e"/></linearGradient></defs><rect width="400" height="200" fill="url(#sea)"/>`+E(200,90,"🦈",110)+E(215,150,"🐟",34)+E(80,40,"🫧",26)+E(330,50,"🫧",22)+`<text x="20" y="190" font-size="15" fill="#e0f2fe" font-family="Baloo 2" font-weight="700">Remora 🐟 under the shark</text>`)},
+ {topic:"Interactions", q:"A tick sucks blood from a dog. This interaction is…",
+  a:["Parasitism","Mutualism","Commensalism","Predation"], hint:"One benefits; the other is harmed.",
+  why:"Parasitism: the tick (parasite) benefits by feeding on blood, while the dog (host) is harmed and can get sick.",
+  scene:()=>svg(SKY("#fde68a","#fffbeb","#a3e635")+E(190,110,"🐕",110)+`<circle cx="232" cy="78" r="26" fill="none" stroke="#ef4444" stroke-width="4"/>`+E(232,78,"🕷️",20)+`<line x1="255" y1="66" x2="300" y2="40" stroke="#ef4444" stroke-width="3"/><text x="304" y="40" font-size="17" fill="#7f1d1d" font-family="Baloo 2" font-weight="800">tick</text>`)},
+ {topic:"Interactions", q:"An owl catches and eats a rat. In this interaction, the owl is the…",
+  a:["Predator","Prey","Parasite","Host"], hint:"It hunts other animals.",
+  why:"The owl is the predator: it hunts and eats the rat, which is its prey. Predation helps keep the rat population under control.",
+  scene:()=>svg(SKY("#1e1b4b","#4338ca","#14532d")+E(330,40,"🌕",40)+E(70,30,"✨",20)+E(150,55,"✨",16)+E(130,80,"🦉",70)+A(170,100,240,140)+E(275,155,"🐀",46))},
+ {topic:"Interactions", q:"Paddy plants and weeds grow close together. What do they mainly compete for?",
+  a:["Water, nutrients and sunlight","Oxygen only","Carbon dioxide only","Space for animals"], hint:"What does every plant need to make food and grow?",
+  why:"Competition: plants growing close together compete for the same limited resources (water, mineral nutrients from the soil, sunlight and space). That's why farmers remove weeds.",
+  scene:()=>svg(SKY("#7dd3fc","#e0f2fe","#713f12")+E(60,40,"☀️",50)+E(340,40,"💧",34)+E(110,120,"🌾",56,"Paddy")+E(200,125,"🌿",50,"Weed")+E(290,120,"🌾",56,"Paddy"))}
+];
+const TOTAL=QUESTIONS.length, BONUS_FROM=9, TIME=30;
+
+/* ---------- Storage (safe) ---------- */
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+             set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- Sound (Web Audio, no files needed) ---------- */
+let soundOn=store.get("es_sound",true), voiceOn=store.get("es_voice",false), actx=null;
+function tone(freqs,dur=.12,type="sine",gap=.1,vol=.18){
+  if(!soundOn) return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    freqs.forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime+i*gap;
+      o.type=type;o.frequency.value=f;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+      o.connect(g).connect(actx.destination);o.start(t);o.stop(t+dur+.02);});
+  }catch(e){}
+}
+const sfx={right:()=>tone([523,659,784],.16,"triangle",.09),wrong:()=>tone([220,165],.25,"sawtooth",.18,.12),
+  tick:()=>tone([880],.05,"square",0,.05),life:()=>tone([440,660],.1,"sine",.08),
+  win:()=>tone([523,659,784,1047,784,1047],.18,"triangle",.12)};
+function speak(t){try{if(!("speechSynthesis" in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-GB";u.rate=.95;speechSynthesis.speak(u);}catch(e){}}
+function syncToggles(){$("#btnSound").textContent=soundOn?"🔊":"🔇";$("#btnVoice").style.opacity=voiceOn?1:.45;}
+
+/* ---------- Helpers ---------- */
+const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));window.scrollTo(0,0);}
+function confetti(){const c=$("#confetti");const cols=["#ffc93c","#ff4f8b","#22c55e","#38bdf8","#a855f7"];
+  for(let i=0;i<80;i++){const p=document.createElement("i");p.style.left=Math.random()*100+"vw";p.style.background=cols[i%5];
+    p.style.animationDuration=(1.8+Math.random()*1.8)+"s";p.style.animationDelay=Math.random()*.6+"s";c.appendChild(p);}
+  setTimeout(()=>c.innerHTML="",4500);}
+
+/* ---------- Game state ---------- */
+let G=null, timerId=null;
+function newGame(){
+  return {name:($("#name").value.trim()||"Player").slice(0,20), mode, i:0, score:0, streak:0, best:0,
+    results:Array(TOTAL).fill(null), redeem:[], phase:"main", queue:[...Array(TOTAL).keys()],
+    lifes:{fifty:true,hint:true,time:true}, locked:false, timeLeft:TIME, order:[]};
+}
+let mode="practice";
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
+  mode=b.dataset.mode;document.querySelectorAll(".mode").forEach(x=>{x.classList.toggle("sel",x===b);x.setAttribute("aria-checked",x===b)});
+});
+
+function startGame(){G=newGame();show("s-game");renderQ();}
+
+function curQ(){return G.queue[G.i];}
+function renderQ(){
+  const qi=curQ(), Q=QUESTIONS[qi]; G.locked=false;
+  const redeem=G.phase==="redeem";
+  $("#hudQ").textContent=redeem?`Second chance ${G.i+1} / ${G.queue.length}`:`Q ${G.i+1} / ${TOTAL}`;
+  $("#hudScore").textContent="⭐ "+G.score;
+  $("#hudStreak").hidden=G.streak<2; $("#hudStreak").textContent="🔥 x"+G.streak;
+  $("#bonus").hidden=redeem||qi<BONUS_FROM;
+  $("#scene").innerHTML=Q.scene();
+  $("#qText").textContent=Q.q;
+  G.order=shuffle(Q.a.map((t,k)=>({t,ok:k===0})));
+  $("#answers").innerHTML=G.order.map((o,k)=>`<button class="ans" data-k="${k}"><span class="k">${k+1}</span>${esc(o.t)}</button>`).join("");
+  document.querySelectorAll(".ans").forEach(b=>b.onclick=()=>choose(+b.dataset.k));
+  $("#fb").className="fb"; $("#hintBox").style.display="none";
+  $("#lifelines").style.display=redeem?"none":"flex";
+  $("#l50").disabled=!G.lifes.fifty; $("#lHint").disabled=!G.lifes.hint;
+  $("#lTime").disabled=!G.lifes.time||G.mode!=="challenge";
+  // timer
+  clearInterval(timerId);
+  const timed=G.mode==="challenge"&&!redeem;
+  $("#timer").style.display=timed?"block":"none";
+  if(timed){G.timeLeft=TIME;updTimer();timerId=setInterval(()=>{G.timeLeft-=.1;updTimer();
+      if(G.timeLeft<=5.05&&Math.abs(G.timeLeft-Math.round(G.timeLeft))<.05&&G.timeLeft>0)sfx.tick();
+      if(G.timeLeft<=0){clearInterval(timerId);choose(-1);}},100);}
+  G.qStart=Date.now();
+  if(voiceOn) speak(Q.q+". "+G.order.map(o=>o.t).join(", "));
+}
+function updTimer(){const p=Math.max(0,G.timeLeft/TIME*100);$("#timerBar").style.width=p+"%";$("#timer").classList.toggle("low",G.timeLeft<=8);}
+
+function choose(k){
+  if(G.locked) return; G.locked=true; clearInterval(timerId);
+  try{speechSynthesis.cancel()}catch(e){}
+  const qi=curQ(), Q=QUESTIONS[qi], redeem=G.phase==="redeem";
+  const ok=k>=0&&G.order[k].ok;
+  document.querySelectorAll(".ans").forEach((b,j)=>{b.disabled=true;if(G.order[j].ok)b.classList.add("right");else if(j===k)b.classList.add("wrong");});
+  let pts=0, detail="";
+  if(ok){
+    if(redeem){pts=50;detail="+50 for fixing it!";}
+    else{
+      G.streak++;G.best=Math.max(G.best,G.streak);
+      let base=100, speed=0, streakB=G.streak>=2?(G.streak-1)*20:0;
+      if(G.mode==="challenge") speed=Math.round(Math.max(0,G.timeLeft)/TIME*50);
+      pts=base+speed+streakB; if(G.dbl){pts*=2;}
+      if(qi>=BONUS_FROM) pts*=2;
+      detail=`+${pts} points`+(speed?` (incl. ${speed} speed bonus)`:"")+(streakB?` · 🔥 streak bonus +${streakB}`:"")+(qi>=BONUS_FROM?" · ⭐ bonus round x2":"");
+    }
+    G.score+=pts; sfx.right();
+  }else{
+    if(!redeem) G.streak=0;
+    sfx.wrong(); $("#gameCard").classList.add("shake"); setTimeout(()=>$("#gameCard").classList.remove("shake"),400);
+    detail=redeem?"No points this time, but now you know why. Keep going!":"No points this time. Read why, then keep going!";
+  }
+  if(redeem) G.redeem.push({qi,ok}); else G.results[qi]={ok,chosen:k>=0?G.order[k].t:"(time ran out)",time:(Date.now()-G.qStart)/1000};
+  const correct=Q.a[0];
+  $("#fbTitle").textContent=ok?["🎉 Correct!","✅ Spot on!","🌟 Brilliant!"][Math.floor(Math.random()*3)]:(k<0?"⏰ Time's up!":"❌ Not quite!");
+  $("#fbWhy").innerHTML=(ok?"":`The correct answer is <b>${esc(correct)}</b>. `)+esc(Q.why);
+  $("#fbPts").textContent=detail;
+  $("#fb").className="fb "+(ok?"ok":"no");
+  $("#hudScore").textContent="⭐ "+G.score;
+  $("#hudStreak").hidden=G.streak<2; $("#hudStreak").textContent="🔥 x"+G.streak;
+  $("#btnNext").textContent=(G.i+1>=G.queue.length)?"Finish ➜":"Next ➜";
+  $("#btnNext").focus({preventScroll:true});
+  $("#fb").scrollIntoView({behavior:"smooth",block:"nearest"});
+  if(voiceOn) speak((ok?"Correct! ":"Not quite. The answer is "+correct+". ")+Q.why);
+}
+
+function next(){
+  try{speechSynthesis.cancel()}catch(e){}
+  G.i++;
+  if(G.i<G.queue.length){renderQ();return;}
+  if(G.phase==="main"){
+    const missed=G.results.map((r,i)=>r&&!r.ok?i:-1).filter(i=>i>=0);
+    if(missed.length){G.phase="redeemIntro";G.missed=missed;$("#missCount").textContent=missed.length;show("s-redeem");return;}
+  }
+  finish();
+}
+function startRedeem(){G.phase="redeem";G.queue=G.missed;G.i=0;show("s-game");renderQ();}
+
+/* lifelines */
+$("#l50").onclick=()=>{if(G.locked||!G.lifes.fifty)return;G.lifes.fifty=false;$("#l50").disabled=true;sfx.life();
+  const wrong=G.order.map((o,k)=>o.ok?-1:k).filter(k=>k>=0);shuffle(wrong).slice(0,2).forEach(k=>document.querySelectorAll(".ans")[k].classList.add("hide"));};
+$("#lHint").onclick=()=>{if(G.locked||!G.lifes.hint)return;G.lifes.hint=false;$("#lHint").disabled=true;sfx.life();
+  const h=$("#hintBox");h.textContent="💡 Hint: "+QUESTIONS[curQ()].hint;h.style.display="block";if(voiceOn)speak(QUESTIONS[curQ()].hint);};
+$("#lTime").onclick=()=>{if(G.locked||!G.lifes.time||G.mode!=="challenge")return;G.lifes.time=false;$("#lTime").disabled=true;sfx.life();G.timeLeft=Math.min(TIME,G.timeLeft+15);updTimer();};
+
+/* ---------- Results ---------- */
+function finish(){
+  clearInterval(timerId);
+  const first=G.results.filter(r=>r&&r.ok).length;
+  const fixed=G.redeem.filter(r=>r.ok).length;
+  const pct=Math.round(first/TOTAL*100);
+  const stars=pct>=90?3:pct>=60?2:pct>=30?1:0;
+  const badge=pct>=90?"🏆 Ecosystem Expert":pct>=60?"🦉 Food Web Wizard":pct>=30?"🐸 Rising Naturalist":"🌱 Seedling Explorer";
+  $("#rName").textContent=G.name+" · "+(G.mode==="challenge"?"⚡ Challenge":"🌱 Practice")+" mode";
+  $("#rScore").textContent=G.score;
+  $("#rStars").textContent="★".repeat(stars)+"☆".repeat(3-stars);
+  $("#rBadge").textContent=badge;
+  $("#rMsg").textContent=`You got ${first} / ${TOTAL} right first time`+(G.redeem.length?` and fixed ${fixed} of ${G.redeem.length} in the Second Chance round.`:".")+(G.best>=3?` Best streak: 🔥${G.best}!`:"");
+  // mastery by topic
+  const topics=[...new Set(QUESTIONS.map(q=>q.topic))];
+  $("#rBars").innerHTML=topics.map(t=>{const ids=QUESTIONS.map((q,i)=>q.topic===t?i:-1).filter(i=>i>=0);
+    const c=ids.filter(i=>G.results[i]&&G.results[i].ok).length;const p=Math.round(c/ids.length*100);
+    return `<div class="bar"><i style="width:${p}%;background:${p>=70?"var(--green)":p>=40?"var(--gold)":"var(--red)"}"></i><span>${esc(t)}: ${c}/${ids.length} (${p}%)</span></div>`}).join("");
+  $("#rReview").innerHTML=QUESTIONS.map((Q,i)=>{const r=G.results[i]||{};const rd=G.redeem.find(x=>x.qi===i);
+    return `<div class="rv">${r.ok?"✅":"❌"} <b>Q${i+1}. ${esc(Q.q)}</b><span class="tag">${esc(Q.topic)}</span><br>
+      ${r.ok?"":`Your answer: ${esc(r.chosen||"-")} · `}Correct: <b>${esc(Q.a[0])}</b>${rd?(rd.ok?" · 🔁 fixed in Second Chance":" · 🔁 still to review"):""}<br>
+      <span class="muted">${esc(Q.why)}</span></div>`}).join("");
+  // save
+  const board=store.get("es_board",[]);board.push({n:G.name,m:G.mode,s:G.score,d:Date.now()});
+  board.sort((a,b)=>b.s-a.s);store.set("es_board",board.slice(0,50));
+  const att=store.get("es_attempts",[]);att.push({n:G.name,m:G.mode,s:G.score,r:G.results.map(r=>r&&r.ok?1:0),d:Date.now()});store.set("es_attempts",att.slice(-500));
+  G.summary=`Ecosystem Showdown results\nName: ${G.name}\nMode: ${G.mode}\nScore: ${G.score}\nFirst try: ${first}/${TOTAL} (${pct}%)\nSecond Chance fixed: ${fixed}/${G.redeem.length}\nMissed first time: ${G.results.map((r,i)=>r&&!r.ok?"Q"+(i+1):null).filter(Boolean).join(", ")||"none"}`;
+  $("#copyMsg").textContent="";
+  show("s-results"); sfx.win(); if(stars>=2) confetti();
+}
+
+function renderBoard(){
+  const b=store.get("es_board",[]).slice(0,10);
+  $("#boardBody").innerHTML=b.length?b.map((r,i)=>`<tr><td>${["🥇","🥈","🥉"][i]||i+1}</td><td>${esc(r.n)}</td><td>${r.m==="challenge"?"⚡":"🌱"}</td><td><b>${r.s}</b></td></tr>`).join("")
+    :`<tr><td colspan="4" class="muted">No scores yet. Be the first!</td></tr>`;
+  show("s-board");
+}
+function renderTeacher(){
+  const att=store.get("es_attempts",[]);
+  const n=att.length, avg=n?Math.round(att.reduce((a,x)=>a+x.s,0)/n):0;
+  const acc=QUESTIONS.map((_,i)=>n?Math.round(att.reduce((a,x)=>a+(x.r[i]||0),0)/n*100):0);
+  const overall=n?Math.round(acc.reduce((a,b)=>a+b,0)/TOTAL):0;
+  $("#tSummary").innerHTML=`<span class="pill">🎮 Games played: <b>${n}</b></span><span class="pill">⭐ Average score: <b>${avg}</b></span><span class="pill">🎯 Average accuracy: <b>${overall}%</b></span>`;
+  $("#tBars").innerHTML=QUESTIONS.map((Q,i)=>`<div class="bar" title="${esc(Q.q)}"><i style="width:${acc[i]}%;background:${acc[i]>=70?"var(--green)":acc[i]>=40?"var(--gold)":"var(--red)"}"></i><span>Q${i+1} · ${esc(Q.a[0])} · ${n?acc[i]+"%":"no data"}</span></div>`).join("");
+  if(n){const worst=acc.indexOf(Math.min(...acc));const Q=QUESTIONS[worst];
+    $("#tFocus").innerHTML=`<b>🎯 Reteach first:</b> Q${worst+1} (${acc[worst]}% correct). "${esc(Q.q)}"<br>Key idea: ${esc(Q.why)}`;}
+  else $("#tFocus").textContent="No games played yet on this device. Results appear here after students finish a game.";
+  show("s-teacher");
+}
+
+/* ---------- Wire up ---------- */
+$("#btnStart").onclick=startGame;
+$("#btnHow").onclick=()=>{const h=$("#how");h.style.display=h.style.display==="block"?"none":"block";};
+$("#btnNext").onclick=next;
+$("#btnRedeem").onclick=startRedeem;
+$("#btnSkipRedeem").onclick=finish;
+$("#btnAgain").onclick=()=>show("s-start");
+$("#btnBoard").onclick=renderBoard; $("#btnBoard2").onclick=renderBoard;
+$("#btnTeacher").onclick=renderTeacher;
+$("#btnReset").onclick=()=>{if(confirm("Clear all class results and the leaderboard on this device?")){store.set("es_attempts",[]);store.set("es_board",[]);renderTeacher();}};
+$("#btnCopy").onclick=async()=>{try{await navigator.clipboard.writeText(G.summary);$("#copyMsg").textContent="Copied! Paste it into Google Classroom or WhatsApp for your teacher.";}
+  catch(e){$("#copyMsg").textContent=G.summary;}};
+$("#btnSpeak").onclick=()=>{const Q=QUESTIONS[curQ()];speak(Q.q+". "+G.order.map(o=>o.t).join(", "));};
+$("#btnSound").onclick=()=>{soundOn=!soundOn;store.set("es_sound",soundOn);syncToggles();};
+$("#btnVoice").onclick=()=>{voiceOn=!voiceOn;store.set("es_voice",voiceOn);syncToggles();if(!voiceOn)try{speechSynthesis.cancel()}catch(e){}};
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
+document.addEventListener("keydown",e=>{
+  if(!$("#s-game").classList.contains("active")) return;
+  if(!G.locked&&["1","2","3","4"].includes(e.key)){const b=document.querySelectorAll(".ans")[+e.key-1];if(b&&!b.classList.contains("hide"))choose(+e.key-1);}
+  else if(G.locked&&e.key==="Enter"){e.preventDefault();next();}
+});
+syncToggles();
+</script>
+</body>
+</html>

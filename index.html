@@ -1002,7 +1002,6 @@ const E=(x,y,e,s=48,label)=>`<text class="em" style="animation-delay:${-(x%7)*.4
 const A=(x1,y1,x2,y2,c="#ffc93c")=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="4" marker-end="url(#ah)"/>`;
 const SKY=(top="#7dd3fc",bot="#e0f2fe",ground="#65a30d")=>`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bot}"/></linearGradient><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ffc93c"/></marker></defs><rect width="400" height="200" fill="url(#sk)"/>`+(ground?`<rect y="150" width="400" height="50" fill="${ground}"/>`:"");
 const svg=c=>`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="img">${c}</svg>`;
-const DARK=`<rect width="400" height="200" fill="#1e3a5f"/>`;
 
 /* ---------- Questions ---------- */
 const QUESTIONS=[
@@ -1126,6 +1125,7 @@ const QUESTIONS=[
    +E(360,120,"🚜",44)+E(180,140,"🦧",44)+`<text x="215" y="40" font-size="16" fill="#7f1d1d" font-family="Baloo 2" font-weight="800">Habitat lost 😢</text>`)}
 ];
 const TOTAL=QUESTIONS.length, BONUS_FROM=QUESTIONS.length-3, TIME=30;
+const TOPIC_IDS={};QUESTIONS.forEach((q,i)=>(TOPIC_IDS[q.topic]=TOPIC_IDS[q.topic]||[]).push(i));
 
 /* ---------- Storage (safe) ---------- */
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
@@ -1249,7 +1249,7 @@ function resumeGame(){
   if(G.answered){G.locked=true;next();} else renderQ();
 }
 function goHome(){
-  clearInterval(timerId);hideOverlay();try{speechSynthesis.cancel()}catch(e){}
+  clearInterval(timerId);hideOverlay();cancelWalk();try{speechSynthesis.cancel()}catch(e){}
   if(G&&G.phase!=="done")saveGame();
   syncResume();show("s-start");
   if(validSave())toast("💾","Progress saved","Tap Continue game whenever you're ready.");
@@ -1277,7 +1277,7 @@ function turnSplash(then){
 /* ---------- Question rendering ---------- */
 function renderQ(){
   const qi=curQ(),Q=QUESTIONS[qi],redeem=G.phase==="redeem";
-  G.locked=true;G.answered=false;clearInterval(timerId);closeSheet();
+  G.locked=true;G.answered=false;G.atMap=false;clearInterval(timerId);closeSheet();
   if(teamMode()&&!redeem) G.cur=G.i%G.teams.length;
   saveGame();
   $("#hudQ").textContent=redeem?`Second chance ${G.i+1} / ${G.queue.length}`:`Q ${G.i+1} / ${TOTAL}`;
@@ -1293,7 +1293,6 @@ function renderQ(){
   $("#l50").textContent=Q.type==="order"?"✂️ Place 2":"✂️ 50:50";
   $("#l50").disabled=!L.fifty;$("#lHint").disabled=!L.hint;$("#lTime").disabled=!L.time;$("#lTime").hidden=!timed();
   $("#timer").style.display=timed()?"flex":"none";G.timeLeft=TIME;if(timed())updTimer();
-  G.atMap=false;
   const first=G.i===0&&G.phase==="main"&&G.mode!=="quest";
   if(first&&teamMode()) countdown(()=>turnSplash(go));
   else if(first) countdown(go);
@@ -1439,13 +1438,17 @@ function resolve(ok,chosen,timeout){
 function next(){
   if(!G||!G.answered)return;
   try{speechSynthesis.cancel()}catch(e){}
-  // Island Quest: go back to the map until every block has been tried
+  // Island Quest: back to the map until every block has been tried
   if(G.mode==="quest"&&G.phase==="main"){
-    if(!G.results.every(Boolean)){renderMap(curQ());return;}
-    G.i=G.queue.length;
+    if(G.results.every(Boolean))endMainPhase();else renderMap(curQ());
+    return;
   }
   G.i++;
   if(G.i<G.queue.length){renderQ();return;}
+  endMainPhase();
+}
+// after the last question: Second Chance for missed ones (solo modes), otherwise results
+function endMainPhase(){
   if(G.phase==="main"&&!teamMode()){
     const missed=G.results.map((r,i)=>r&&!r.ok?i:-1).filter(i=>i>=0);
     if(missed.length){G.phase="redeemIntro";G.missed=missed;$("#missCount").textContent=missed.length;saveGame();show("s-redeem");return;}
@@ -1475,10 +1478,12 @@ const ZONES=[
 const zoneOfQ=qi=>ZONES.find(z=>z.t===QUESTIONS[qi].topic);
 // every ground tile belongs to the zone of its nearest challenge block
 const zoneAt=(gx,gy)=>{let best=0,d=1e9;QCELLS.forEach(([x,y],qi)=>{const k=Math.abs(x-gx)+Math.abs(y-gy);if(k<d){d=k;best=qi;}});return zoneOfQ(best);};
+const ZGRID=[...Array(QN)].map((_,gy)=>[...Array(QN)].map((_,gx)=>zoneAt(gx,gy)));
 const QDEAD=["#cbd5e1","#94a3b8","#64748b"],QWILT=["#d6a77a","#b07a4a","#7c4a1e"];
 const isQuestCell=(gx,gy)=>QCELLS.some(([x,y])=>x===gx&&y===gy);
 
 function renderMap(fresh=-1){
+  if(G.phase==="main"&&G.results.every(Boolean)){endMainPhase();return;}   // e.g. resumed after the last block
   G.atMap=true;G.moving=false;G.zDone=G.zDone||[];
   const ok=G.results.filter(r=>r&&r.ok).length,done=G.results.filter(Boolean).length;
   $("#mapProg").textContent=`🌱 ${ok}/${TOTAL} restored`;$("#mapScore").textContent="⭐ "+T().score;
@@ -1492,7 +1497,7 @@ function renderMap(fresh=-1){
   svg+=qcube(0,0,-1.35,QN,QN,1,["#8b5a2b","#9a6332","#6e4220"])+qcube(0,0,-.35,QN,QN,.35,["#7cc85a","#5fae3f","#3f8a2b"]);
   const items=[];
   for(let gy=0;gy<QN;gy++)for(let gx=0;gx<QN;gx++){
-    const z=zoneAt(gx,gy),odd=(gx+gy)%2===1,edge=gx===0||gy===0||gx===QN-1||gy===QN-1;
+    const z=ZGRID[gy][gx],odd=(gx+gy)%2===1,edge=gx===0||gy===0||gx===QN-1||gy===QN-1;
     if(gx===4&&gy===4){svg+=qtile(gx,gy,"#e9d8a6");continue;}
     if(z.n==="Wetland"&&odd&&(gx*7+gy*3)%3===0){svg+=qtile(gx,gy,"#38bdf8",-.12);items.push([gx+gy,`<ellipse cx="${QP(gx+.5,gy+.5)[0]}" cy="${QP(gx+.5,gy+.5)[1]+2}" rx="12" ry="3" fill="#e0f2fe" opacity=".8"/>`]);continue;}
     svg+=qtile(gx,gy,z.ground);
@@ -1518,14 +1523,14 @@ function renderMap(fresh=-1){
   ZONES.forEach(z=>{const [x,y]=QP(z.sign[0],z.sign[1]),w=z.n.length*9+44;
     svg+=`<g class="zsign"><rect x="${x-w/2}" y="${y-15}" width="${w}" height="28" rx="14" fill="rgba(6,32,42,.78)" stroke="rgba(255,255,255,.35)"/><text x="${x}" y="${y+5}" font-size="14" font-weight="800" fill="#fff" text-anchor="middle" font-family="Baloo 2, sans-serif">${z.i} ${z.n.toUpperCase()}</text></g>`;});
   const [ax,ay]=avatarAt(G.qPos);
-  svg+=`<g id="qAv" style="transform:translate(${ax}px,${ay}px)"><ellipse cx="0" cy="0" rx="14" ry="5" fill="#0b3b1a" opacity=".3"/><text x="0" y="-8" font-size="42" text-anchor="middle">${G.teams[0].av}</text></g>`;
+  svg+=`<g id="qAv" style="transform:translate(${ax}px,${ay}px)"><ellipse cx="0" cy="0" rx="14" ry="5" fill="#0b3b1a" opacity=".3"/><text x="0" y="-8" font-size="42" text-anchor="middle">${esc(G.teams[0].av)}</text></g>`;
   $("#isoMap").innerHTML=svg;$("#mapTipBox").hidden=true;
   renderMapSide(fresh);
   show("s-map");saveGame();
 }
 function renderMapSide(fresh){
   $("#msZones").innerHTML=ZONES.map(z=>{
-    const ids=QUESTIONS.map((q,i)=>q.topic===z.t?i:-1).filter(i=>i>=0),c=ids.filter(i=>G.results[i]&&G.results[i].ok).length,tried=ids.filter(i=>G.results[i]).length;
+    const ids=TOPIC_IDS[z.t],c=ids.filter(i=>G.results[i]&&G.results[i].ok).length;
     const full=c===ids.length;
     return `<div class="msz${full?" full":""}"><span class="zi">${z.i}</span><div class="zt"><b>${z.n}${full?" ✓":""}</b><small>${esc(z.t)}</small>
       <div class="zbar"><i style="width:${c/ids.length*100}%;background:${z.bar}"></i></div></div><span class="zc">${c}/${ids.length}</span></div>`;}).join("");
@@ -1536,7 +1541,7 @@ function renderMapSide(fresh){
   $("#mapTip").textContent=left===TOTAL?"Tap any glowing block, or press Next challenge. Your explorer walks there and the challenge begins."
     :`${left} block${left===1?"":"s"} left. Wilted blocks ↻ come back in the Second Chance round.`;
   // celebrate a zone the moment its last block is restored
-  if(fresh>=0){const z=zoneOfQ(fresh),ids=QUESTIONS.map((q,i)=>q.topic===z.t?i:-1).filter(i=>i>=0);
+  if(fresh>=0){const z=zoneOfQ(fresh),ids=TOPIC_IDS[z.t];
     if(!G.zDone.includes(z.n)&&ids.every(i=>G.results[i]&&G.results[i].ok)){G.zDone.push(z.n);setTimeout(()=>{toast(z.i,`${z.n} restored!`,`Every ${z.t.toLowerCase()} challenge is complete.`);sfx.win();},500);}}
 }
 function nearestTodo(){
@@ -1549,6 +1554,8 @@ function avatarAt(qi){
   const [gx,gy]=QCELLS[qi],[x,y]=QP(gx+.5,gy+.75,QZ);return [x,y];
 }
 // walk tile by tile (along x, then y) instead of sliding straight across the island
+let walkTimers=[];
+function cancelWalk(){walkTimers.forEach(clearTimeout);walkTimers=[];if(G)G.moving=false;}
 function walkTo(qi){
   if(!G||G.moving||G.results[qi])return;
   G.moving=true;sfx.tap();$("#mapTipBox").hidden=true;
@@ -1556,9 +1563,9 @@ function walkTo(qi){
   let x=fx,y=fy;while(x!==tx){x+=Math.sign(tx-x);path.push([x,y]);}while(y!==ty){y+=Math.sign(ty-y);path.push([x,y]);}
   const stepMs=Math.max(70,Math.min(140,900/Math.max(1,path.length)));
   av.style.transition=`transform ${stepMs}ms linear`;av.classList.add("walk");
-  path.forEach(([gx,gy],k)=>setTimeout(()=>{const last=k===path.length-1,on=isQuestCell(gx,gy)&&!(gx===4&&gy===4);
-    const [px,py]=QP(gx+.5,gy+.75,on?QZ:0);av.style.transform=`translate(${px}px,${py}px)`;if(last)sfx.tap();},k*stepMs));
-  setTimeout(()=>{av.classList.remove("walk");G.moving=false;G.qPos=qi;G.i=qi;show("s-game");renderQ();},path.length*stepMs+260);
+  path.forEach(([gx,gy],k)=>walkTimers.push(setTimeout(()=>{const last=k===path.length-1;
+    const [px,py]=QP(gx+.5,gy+.75,isQuestCell(gx,gy)?QZ:0);av.style.transform=`translate(${px}px,${py}px)`;if(last)sfx.tap();},k*stepMs)));
+  walkTimers.push(setTimeout(()=>{walkTimers=[];av.classList.remove("walk");G.moving=false;G.qPos=qi;G.i=qi;show("s-game");renderQ();},path.length*stepMs+260));
 }
 $("#isoMap").addEventListener("click",e=>{const t=e.target.closest(".qt.todo");if(t)walkTo(+t.dataset.q);});
 $("#btnNextBlock").onclick=()=>{const n=nearestTodo();if(n>=0)walkTo(n);};
@@ -1649,7 +1656,7 @@ function finish(){
   if(!teamMode())$("#name").value="";   // next student on a shared device starts with a blank name
   // mastery by topic
   const topics=[...new Set(QUESTIONS.map(q=>q.topic))];
-  $("#rBars").innerHTML=topics.map(tp=>{const ids=QUESTIONS.map((q,i)=>q.topic===tp?i:-1).filter(i=>i>=0);
+  $("#rBars").innerHTML=topics.map(tp=>{const ids=TOPIC_IDS[tp];
     const c=ids.filter(i=>G.results[i]&&G.results[i].ok).length;const p=Math.round(c/ids.length*100);
     return `<div class="bar"><i style="width:${p}%;background:${p>=70?"var(--mint)":p>=40?"var(--gold)":"var(--coral)"}"></i><span>${esc(tp)}: ${c}/${ids.length} (${p}%)</span></div>`}).join("");
   $("#rReview").innerHTML=QUESTIONS.map((Q,i)=>{const r=G.results[i]||{};const rd=G.redeem.find(x=>x.qi===i);
@@ -1672,7 +1679,7 @@ function finish(){
 
 function buildReports(first,fixed,pct,topics,ranked){
   const date=new Date().toLocaleString("en-MY",{dateStyle:"medium",timeStyle:"short"});
-  const tp=topics.map(t=>{const ids=QUESTIONS.map((q,i)=>q.topic===t?i:-1).filter(i=>i>=0);const c=ids.filter(i=>G.results[i]&&G.results[i].ok).length;return{t,c,n:ids.length,p:Math.round(c/ids.length*100)};});
+  const tp=topics.map(t=>{const ids=TOPIC_IDS[t];const c=ids.filter(i=>G.results[i]&&G.results[i].ok).length;return{t,c,n:ids.length,p:Math.round(c/ids.length*100)};});
   const missed=G.results.map((r,i)=>r&&!r.ok?i:-1).filter(i=>i>=0);
   const strong=tp.filter(x=>x.p>=70);
   const idea=i=>{const p=QUESTIONS[i].why.split(/(?<=\.)\s/);return esc(p[0].length<30?p.slice(0,2).join(" "):p[0]);};
@@ -1735,7 +1742,7 @@ function recordProfile(pct,topics){
   p.n=t.n;p.av=t.av;
   p.games.push({d:Date.now(),m:G.mode,s:t.score,acc:pct,best:t.best,ach:G.ach.slice(),
     r:G.results.map(r=>r&&r.ok?1:0),
-    tp:Object.fromEntries(topics.map(tp=>{const ids=QUESTIONS.map((q,i)=>q.topic===tp?i:-1).filter(i=>i>=0);
+    tp:Object.fromEntries(topics.map(tp=>{const ids=TOPIC_IDS[tp];
       return [tp,Math.round(ids.filter(i=>G.results[i]&&G.results[i].ok).length/ids.length*100)];}))});
   p.games=p.games.slice(-30);
   all[k]=p;store.set("es_profiles",all);

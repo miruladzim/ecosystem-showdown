@@ -435,6 +435,9 @@
   .toggles{position:fixed;top:max(10px,env(safe-area-inset-top));right:10px;display:flex;gap:8px;z-index:25}
   .toggles button{font-size:18px;width:42px;height:42px;border-radius:50%;background:rgba(5,46,58,.7);border:1.5px solid var(--line);color:var(--text);cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
   .toggles button:hover{background:rgba(255,255,255,.2)}
+  .toggles button{display:grid;place-items:center;color:#fff;padding:0}
+  .toggles button.off{color:#9fb7c4}
+  .toggles button.on{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 3px rgba(255,210,74,.18)}
   .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:40}
   .confetti i{position:absolute;top:-20px;width:10px;height:14px;border-radius:2px;animation:fall linear forwards}
   @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
@@ -1061,7 +1064,21 @@ const sfx={right:()=>tone([523,659,784],.16,"triangle",.09),wrong:()=>tone([220,
   tap:()=>tone([660],.05,"sine",0,.08),badge:()=>tone([784,988,1319],.14,"triangle",.08,.14),
   fire:()=>tone([392,523,659,784,1047],.1,"square",.06,.07),turn:()=>tone([523,784],.14,"triangle",.12,.14)};
 function speak(t){try{if(!("speechSynthesis" in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-GB";u.rate=.95;speechSynthesis.speak(u);}catch(e){}}
-function syncToggles(){$("#btnSound").textContent=soundOn?"🔊":"🔇";$("#btnVoice").style.opacity=voiceOn?1:.45;}
+// line icons stay legible in both states (the faded emoji looked like a smudge when off)
+const ICONS={
+  speaker:'<path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/>',
+  waves:'<path d="M15.5 8.5a4.5 4.5 0 0 1 0 7M18.5 5.5a8.5 8.5 0 0 1 0 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>',
+  mute:'<path d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+  bubble:'<path d="M4 4.5h16v11H10l-5 4v-4H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 8.5h8M8 11.5h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  slash:'<path d="M3.5 3.5l17 17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>'};
+const icon=p=>`<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">${p}</svg>`;
+function syncToggles(){
+  const s=$("#btnSound"),v=$("#btnVoice");
+  s.innerHTML=icon(ICONS.speaker+(soundOn?ICONS.waves:ICONS.mute));s.classList.toggle("off",!soundOn);s.setAttribute("aria-pressed",soundOn);
+  s.title=soundOn?"Sound effects: ON (click to mute)":"Sound effects: OFF (click to turn on)";
+  v.innerHTML=icon(ICONS.bubble+(voiceOn?"":ICONS.slash));v.classList.toggle("off",!voiceOn);v.classList.toggle("on",voiceOn);v.setAttribute("aria-pressed",voiceOn);
+  v.title=voiceOn?"Read aloud: ON (questions are read to you)":"Read aloud: OFF (click to hear questions read aloud)";
+}
 
 /* ---------- Helpers ---------- */
 const $=s=>document.querySelector(s);

@@ -484,24 +484,47 @@
   .playPane .mode .tag.d3{background:rgba(56,189,248,.2);color:#e0f2fe;border-color:rgba(56,189,248,.55)}
   .mapBar{height:10px;border-radius:99px;background:rgba(3,24,32,.6);overflow:hidden;margin:0 0 10px;border:1px solid var(--line)}
   .mapBar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mint),var(--gold));transition:width .6s}
-  .mapWrap{border-radius:22px;overflow:hidden;line-height:0;border:2px solid rgba(255,255,255,.18);box-shadow:0 14px 34px rgba(0,0,0,.35);background:linear-gradient(180deg,#7dd3fc,#e0f2fe)}
-  #isoMap{width:100%;height:auto;max-height:calc(100vh - 232px);display:block}
-  #isoMap .qt{cursor:default}
-  #isoMap .qt.todo{cursor:pointer}
-  #isoMap .qt.todo:hover{transform:translateY(-6px)}
+  .mapLayout{display:grid;grid-template-columns:1fr 270px;gap:14px;align-items:stretch}
+  .mapWrap{position:relative;border-radius:22px;overflow:hidden;line-height:0;border:2px solid rgba(255,255,255,.18);box-shadow:0 14px 34px rgba(0,0,0,.35);background:linear-gradient(180deg,#7dd3fc,#e0f2fe)}
+  #isoMap{width:100%;height:auto;max-height:calc(100vh - 190px);display:block}
   #isoMap .qt{transition:transform .2s}
+  #isoMap .qt.todo{cursor:pointer}
+  #isoMap .qt.todo:hover{transform:translateY(-7px)}
   #isoMap .glow{animation:qGlow 1.5s ease-in-out infinite}
   @keyframes qGlow{50%{stroke-opacity:.15}}
   #isoMap .ghost{filter:grayscale(1);opacity:.6}
   #isoMap .alive{animation:bob 3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
   #isoMap .fresh{animation:sprout .9s cubic-bezier(.2,1.6,.4,1) both;transform-box:fill-box;transform-origin:center bottom}
-  #qAv{transition:transform .6s cubic-bezier(.45,1.3,.5,1);pointer-events:none}
+  #isoMap .qt.just{animation:qJust 1.2s ease-out}
+  @keyframes qJust{0%{filter:brightness(1.8)}100%{filter:none}}
+  #isoMap .cloud{animation:cloudDrift 30s linear infinite}
+  #isoMap .cloud.c2{animation-duration:40s;animation-delay:-18s}
+  #isoMap .zsign{pointer-events:none}
+  #qAv{pointer-events:none}
   #qAv text{transform-box:fill-box;transform-origin:center bottom}
-  #qAv.hop text{animation:qHop .6s ease}
-  @keyframes qHop{45%{transform:translateY(-30px) scale(1.1)}}
-  .mapLegend{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:13px;font-weight:800}
-  .mapLegend .c{padding:3px 10px;border-radius:99px;background:var(--glass2);border:1px solid var(--line)}
-  .mapLegend .muted{flex-basis:100%;font-weight:700}
+  #qAv.walk text{animation:qStep .24s ease-in-out infinite}
+  @keyframes qStep{50%{transform:translateY(-9px) rotate(-4deg)}}
+  .mapTipBox{position:absolute;z-index:3;line-height:1.3;width:200px;padding:8px 12px;border-radius:14px;background:rgba(6,32,42,.92);border:1px solid var(--line);box-shadow:0 8px 20px rgba(0,0,0,.35);pointer-events:none;font-size:12.5px}
+  .mapTipBox b{display:block;font-family:var(--head);font-size:15px}
+  .mapTipBox span{display:block;color:var(--muted)}
+  .mapTipBox em{display:block;font-style:normal;font-weight:800;color:var(--gold);margin-top:2px}
+  .mapSide{display:flex;flex-direction:column;gap:10px}
+  .msZones{display:grid;gap:8px}
+  .msz{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:rgba(3,24,32,.45);border:1.5px solid var(--line);border-radius:16px;padding:8px 12px}
+  .msz.full{border-color:var(--mint);background:rgba(52,211,153,.14)}
+  .msz .zi{font-size:26px}
+  .msz .zt b{display:block;font-family:var(--head);font-size:16px;line-height:1.1}
+  .msz .zt small{display:block;font-size:11.5px;color:var(--muted);font-weight:700;margin-bottom:4px}
+  .zbar{height:7px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+  .zbar i{display:block;height:100%;border-radius:99px;transition:width .6s}
+  .msz .zc{font-family:var(--head);font-weight:800;font-size:16px;color:var(--gold)}
+  .msInfo{display:flex;justify-content:space-between;align-items:center;background:rgba(3,24,32,.45);border:1.5px solid var(--line);border-radius:14px;padding:8px 12px;font-weight:800;font-size:14px}
+  .msInfo b{font-family:var(--head);color:var(--gold);font-size:17px}
+  #btnNextBlock{display:flex;flex-direction:column;align-items:center;line-height:1.1;font-size:19px;padding:11px 14px}
+  #btnNextBlock small{font-family:var(--body);font-size:12.5px;font-weight:700;opacity:.85;margin-top:3px}
+  #btnNextBlock[hidden]{display:none}
+  .msTip{font-size:13px;color:var(--muted);font-weight:700;margin:0}
+  @media (max-width:900px){.mapLayout{grid-template-columns:1fr}.mapSide{display:grid;grid-template-columns:1fr}}
   @media (min-width:900px){
     .playPane .modes{grid-template-columns:1fr 1fr}
     .playPane .mode{align-items:flex-start}
@@ -832,10 +855,17 @@
         <span class="pill gold" id="mapScore">⭐ 0</span>
       </div>
       <div class="mapBar"><i id="mapBarFill"></i></div>
-      <div class="mapWrap"><svg id="isoMap" viewBox="24 34 712 424" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Island map. Tap a glowing block to start its challenge."></svg></div>
-      <div class="mapLegend">
-        <span class="c">🌲 Forest · Food chains</span><span class="c">🐸 Wetland · Interactions</span><span class="c">🌾 Farm · Balance &amp; cycles</span><span class="c">⭐ Treasure = double points</span>
-        <span class="muted" id="mapTip">Tap any glowing block. Your explorer walks there and the challenge begins.</span>
+      <div class="mapLayout">
+        <div class="mapWrap" id="mapWrap">
+          <svg id="isoMap" viewBox="24 30 712 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Island map. Tap a glowing block to start its challenge."></svg>
+          <div class="mapTipBox" id="mapTipBox" hidden></div>
+        </div>
+        <aside class="mapSide">
+          <div class="msZones" id="msZones"></div>
+          <div class="msInfo"><span>⭐ Treasure blocks</span><b id="msTreasure">0/3</b></div>
+          <button class="btn" id="btnNextBlock">▶ Next challenge</button>
+          <p class="msTip" id="mapTip"></p>
+        </aside>
       </div>
     </div>
   </section>
@@ -1426,63 +1456,122 @@ function startRedeem(){G.phase="redeem";G.queue=G.missed;G.i=0;G.cur=0;show("s-g
 
 
 /* ---------- Island Quest: isometric voxel map ---------- */
-const QN=9,QA=38,QB=19,QH=24,QCX=380,QCY=78;
+const QN=9,QA=38,QB=19,QH=24,QCX=380,QCY=80,QZ=.5;
 const QP=(gx,gy,gz=0)=>[QCX+(gx-gy)*QA,QCY+(gx+gy)*QB-gz*QH];
 const qpoly=(pts,fill,extra="")=>`<polygon points="${pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ")}" fill="${fill}"${extra}/>`;
 function qcube(gx,gy,gz,w,d,h,c){const t=gz+h;
   return qpoly([QP(gx,gy+d,t),QP(gx+w,gy+d,t),QP(gx+w,gy+d,gz),QP(gx,gy+d,gz)],c[1])
     +qpoly([QP(gx+w,gy,t),QP(gx+w,gy+d,t),QP(gx+w,gy+d,gz),QP(gx+w,gy,gz)],c[2])
     +qpoly([QP(gx,gy,t),QP(gx+w,gy,t),QP(gx+w,gy+d,t),QP(gx,gy+d,t)],c[0],' stroke="rgba(0,0,0,.12)"');}
-// 24 challenge blocks on a checkerboard around the camp in the middle; questions are ordered by topic, so the
-// forest (food chains) sits at the back, the wetland (interactions) in the middle and the farm (balance) at the front
+const qtile=(gx,gy,fill,z=0)=>qpoly([QP(gx,gy,z),QP(gx+1,gy,z),QP(gx+1,gy+1,z),QP(gx,gy+1,z)],fill,' stroke="rgba(255,255,255,.14)"');
+// 24 challenge blocks on a checkerboard around the camp; questions run in topic order, so the forest
+// (food chains) is the back strip, the wetland (interactions) the middle and the farm (balance) the front
 const QCELLS=[];
 for(let gy=1;gy<QN-1;gy++)for(let gx=1;gx<QN-1;gx++)if((gx+gy)%2===0&&!(gx===4&&gy===4))QCELLS.push([gx,gy]);
-const QZONE={"Food chains & webs":["#4ade80","#22c55e","#15803d"],"Interactions":["#5eead4","#14b8a6","#0f766e"],"Balance & cycles":["#fde047","#eab308","#a16207"]};
+const ZONES=[
+  {t:"Food chains & webs",n:"Forest",i:"🌲",ground:"#5fb04a",block:["#4ade80","#22c55e","#15803d"],bar:"var(--mint)",sign:[5.2,-.9]},
+  {t:"Interactions",n:"Wetland",i:"🐸",ground:"#79c49b",block:["#5eead4","#14b8a6","#0f766e"],bar:"var(--sky)",sign:[9.9,4.6]},
+  {t:"Balance & cycles",n:"Farm",i:"🌾",ground:"#b7cf62",block:["#fde047","#eab308","#a16207"],bar:"var(--gold)",sign:[4.3,9.9]}];
+const zoneOfQ=qi=>ZONES.find(z=>z.t===QUESTIONS[qi].topic);
+// every ground tile belongs to the zone of its nearest challenge block
+const zoneAt=(gx,gy)=>{let best=0,d=1e9;QCELLS.forEach(([x,y],qi)=>{const k=Math.abs(x-gx)+Math.abs(y-gy);if(k<d){d=k;best=qi;}});return zoneOfQ(best);};
 const QDEAD=["#cbd5e1","#94a3b8","#64748b"],QWILT=["#d6a77a","#b07a4a","#7c4a1e"];
-const QTREES=[[0,2],[0,6],[2,8],[6,8],[8,3],[8,6],[3,0],[7,0],[0,4],[5,8]];
+const isQuestCell=(gx,gy)=>QCELLS.some(([x,y])=>x===gx&&y===gy);
+
 function renderMap(fresh=-1){
-  G.atMap=true;G.moving=false;
+  G.atMap=true;G.moving=false;G.zDone=G.zDone||[];
   const ok=G.results.filter(r=>r&&r.ok).length,done=G.results.filter(Boolean).length;
   $("#mapProg").textContent=`🌱 ${ok}/${TOTAL} restored`;$("#mapScore").textContent="⭐ "+T().score;
   $("#mapBarFill").style.width=(done/TOTAL*100)+"%";
-  $("#mapTip").textContent=done?`${TOTAL-done} block${TOTAL-done===1?"":"s"} left. Wilted blocks come back in the Second Chance round.`:"Tap any glowing block. Your explorer walks there and the challenge begins.";
-  let svg=`<defs><linearGradient id="qSea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#e0f2fe"/></linearGradient></defs>
-    <rect width="760" height="470" fill="url(#qSea)"/><ellipse cx="380" cy="458" rx="300" ry="10" fill="#0c4a6e" opacity=".18"/>`;
+  // terrain
+  let svg=`<defs><linearGradient id="qSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#e0f2fe"/></linearGradient></defs>
+    <rect x="0" y="0" width="760" height="480" fill="url(#qSky)"/>
+    <g class="cloud c1"><ellipse cx="110" cy="70" rx="40" ry="13" fill="#fff" opacity=".85"/><ellipse cx="136" cy="61" rx="24" ry="13" fill="#fff" opacity=".85"/></g>
+    <g class="cloud c2"><ellipse cx="640" cy="90" rx="34" ry="11" fill="#fff" opacity=".8"/><ellipse cx="660" cy="82" rx="20" ry="11" fill="#fff" opacity=".8"/></g>
+    <ellipse class="isleShadow" cx="380" cy="452" rx="290" ry="9" fill="#0c4a6e" opacity=".18"/>`;
   svg+=qcube(0,0,-1.35,QN,QN,1,["#8b5a2b","#9a6332","#6e4220"])+qcube(0,0,-.35,QN,QN,.35,["#7cc85a","#5fae3f","#3f8a2b"]);
-  for(let k=1;k<QN;k++){const a=QP(k,0),b=QP(k,QN),c=QP(0,k),d=QP(QN,k);
-    svg+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#fff" stroke-opacity=".12"/><line x1="${c[0]}" y1="${c[1]}" x2="${d[0]}" y2="${d[1]}" stroke="#fff" stroke-opacity=".12"/>`;}
   const items=[];
-  QTREES.forEach(([gx,gy])=>items.push([gx+gy,qcube(gx+.38,gy+.38,0,.24,.24,.7,["#a0673a","#8b5a2b","#6e4220"])+qcube(gx+.15,gy+.15,.6,.7,.7,.75,["#4ade80","#22c55e","#15803d"])]));
+  for(let gy=0;gy<QN;gy++)for(let gx=0;gx<QN;gx++){
+    const z=zoneAt(gx,gy),odd=(gx+gy)%2===1,edge=gx===0||gy===0||gx===QN-1||gy===QN-1;
+    if(gx===4&&gy===4){svg+=qtile(gx,gy,"#e9d8a6");continue;}
+    if(z.n==="Wetland"&&odd&&(gx*7+gy*3)%3===0){svg+=qtile(gx,gy,"#38bdf8",-.12);items.push([gx+gy,`<ellipse cx="${QP(gx+.5,gy+.5)[0]}" cy="${QP(gx+.5,gy+.5)[1]+2}" rx="12" ry="3" fill="#e0f2fe" opacity=".8"/>`]);continue;}
+    svg+=qtile(gx,gy,z.ground);
+    if(z.n==="Farm"&&odd){for(let k=1;k<4;k++){const a1=QP(gx+.15,gy+k/4),a2=QP(gx+.85,gy+k/4);svg+=`<line x1="${a1[0]}" y1="${a1[1]}" x2="${a2[0]}" y2="${a2[1]}" stroke="#7c9a2e" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>`;}}
+    if(z.n==="Forest"&&odd&&edge) items.push([gx+gy,qcube(gx+.38,gy+.38,0,.24,.24,.6,["#a0673a","#8b5a2b","#6e4220"])+qcube(gx+.15,gy+.15,.5,.7,.7,.7,["#4ade80","#22c55e","#15803d"])]);
+    else if(odd&&edge&&(gx+gy*2)%3===0) items.push([gx+gy,qcube(gx+.25,gy+.25,0,.5,.5,.3,["#86efac","#4ade80","#16a34a"])]);
+  }
   {const [x,y]=QP(4.5,4.5);items.push([8.9,`<text x="${x}" y="${y-2}" font-size="34" text-anchor="middle">🏕️</text>`]);}
+  // challenge blocks
   QCELLS.forEach(([gx,gy],qi)=>{
-    const Q=QUESTIONS[qi],r=G.results[qi],st=r?(r.ok?"ok":"bad"):"todo";
-    const col=st==="ok"?QZONE[Q.topic]:st==="bad"?QWILT:QDEAD;
-    const [x,y]=QP(gx+.5,gy+.5,.45),top=[QP(gx+.08,gy+.08,.45),QP(gx+.92,gy+.08,.45),QP(gx+.92,gy+.92,.45),QP(gx+.08,gy+.92,.45)];
-    let g=`<g class="qt ${st}" data-q="${qi}"><title>Q${qi+1} · ${esc(Q.topic)}${st==="ok"?" · restored":st==="bad"?" · try again in Second Chance":""}</title>`
-      +qcube(gx+.08,gy+.08,0,.84,.84,.45,col);
+    const Q=QUESTIONS[qi],r=G.results[qi],st=r?(r.ok?"ok":"bad"):"todo",zn=zoneOfQ(qi);
+    const col=st==="ok"?zn.block:st==="bad"?QWILT:QDEAD;
+    const [x,y]=QP(gx+.5,gy+.5,QZ),top=[QP(gx+.08,gy+.08,QZ),QP(gx+.92,gy+.08,QZ),QP(gx+.92,gy+.92,QZ),QP(gx+.08,gy+.92,QZ)];
+    let g=`<g class="qt ${st}${qi===fresh?" just":""}" data-q="${qi}">`+qcube(gx+.08,gy+.08,0,.84,.84,QZ,col);
     if(st==="todo")g+=qpoly(top,"none",' class="glow" stroke="#ffd24a" stroke-width="3"');
     g+=`<text x="${x}" y="${y-4}" font-size="${st==="ok"?34:30}" text-anchor="middle" class="${st==="ok"?(qi===fresh?"fresh":"alive"):"ghost"}" style="animation-delay:${-(qi%5)*.6}s">${Q.eco}</text>`;
-    if(st==="bad")g+=`<text x="${x+16}" y="${y-22}" font-size="15" text-anchor="middle" fill="#b91c1c" font-weight="900">↻</text>`;
-    if(qi>=BONUS_FROM)g+=`<text x="${x+17}" y="${y-24}" font-size="15" text-anchor="middle">⭐</text>`;
+    if(st==="bad")g+=`<text x="${x+17}" y="${y-24}" font-size="16" text-anchor="middle" fill="#b91c1c" font-weight="900">↻</text>`;
+    if(qi>=BONUS_FROM&&st!=="ok")g+=`<text x="${x+17}" y="${y-24}" font-size="16" text-anchor="middle">⭐</text>`;
     items.push([gx+gy+.5,g+`</g>`]);
   });
   items.sort((a,b)=>a[0]-b[0]).forEach(i=>svg+=i[1]);
+  // zone signs
+  ZONES.forEach(z=>{const [x,y]=QP(z.sign[0],z.sign[1]),w=z.n.length*9+44;
+    svg+=`<g class="zsign"><rect x="${x-w/2}" y="${y-15}" width="${w}" height="28" rx="14" fill="rgba(6,32,42,.78)" stroke="rgba(255,255,255,.35)"/><text x="${x}" y="${y+5}" font-size="14" font-weight="800" fill="#fff" text-anchor="middle" font-family="Baloo 2, sans-serif">${z.i} ${z.n.toUpperCase()}</text></g>`;});
   const [ax,ay]=avatarAt(G.qPos);
   svg+=`<g id="qAv" style="transform:translate(${ax}px,${ay}px)"><ellipse cx="0" cy="0" rx="14" ry="5" fill="#0b3b1a" opacity=".3"/><text x="0" y="-8" font-size="42" text-anchor="middle">${G.teams[0].av}</text></g>`;
-  $("#isoMap").innerHTML=svg;
+  $("#isoMap").innerHTML=svg;$("#mapTipBox").hidden=true;
+  renderMapSide(fresh);
   show("s-map");saveGame();
+}
+function renderMapSide(fresh){
+  $("#msZones").innerHTML=ZONES.map(z=>{
+    const ids=QUESTIONS.map((q,i)=>q.topic===z.t?i:-1).filter(i=>i>=0),c=ids.filter(i=>G.results[i]&&G.results[i].ok).length,tried=ids.filter(i=>G.results[i]).length;
+    const full=c===ids.length;
+    return `<div class="msz${full?" full":""}"><span class="zi">${z.i}</span><div class="zt"><b>${z.n}${full?" ✓":""}</b><small>${esc(z.t)}</small>
+      <div class="zbar"><i style="width:${c/ids.length*100}%;background:${z.bar}"></i></div></div><span class="zc">${c}/${ids.length}</span></div>`;}).join("");
+  const tr=[0,1,2].filter(k=>G.results[BONUS_FROM+k]&&G.results[BONUS_FROM+k].ok).length;
+  $("#msTreasure").textContent=`${tr}/3`;
+  const nxt=nearestTodo(),left=G.results.filter(r=>!r).length;
+  const b=$("#btnNextBlock");b.hidden=nxt<0;if(nxt>=0)b.innerHTML=`▶ Next challenge <small>Q${nxt+1} · ${zoneOfQ(nxt).i} ${zoneOfQ(nxt).n}</small>`;
+  $("#mapTip").textContent=left===TOTAL?"Tap any glowing block, or press Next challenge. Your explorer walks there and the challenge begins."
+    :`${left} block${left===1?"":"s"} left. Wilted blocks ↻ come back in the Second Chance round.`;
+  // celebrate a zone the moment its last block is restored
+  if(fresh>=0){const z=zoneOfQ(fresh),ids=QUESTIONS.map((q,i)=>q.topic===z.t?i:-1).filter(i=>i>=0);
+    if(!G.zDone.includes(z.n)&&ids.every(i=>G.results[i]&&G.results[i].ok)){G.zDone.push(z.n);setTimeout(()=>{toast(z.i,`${z.n} restored!`,`Every ${z.t.toLowerCase()} challenge is complete.`);sfx.win();},500);}}
+}
+function nearestTodo(){
+  const [fx,fy]=G.qPos>=0?QCELLS[G.qPos]:[4,4];let best=-1,d=1e9;
+  QCELLS.forEach(([x,y],qi)=>{if(G.results[qi])return;const k=Math.abs(x-fx)+Math.abs(y-fy);if(k<d){d=k;best=qi;}});
+  return best;
 }
 function avatarAt(qi){
   if(qi==null||qi<0){const [x,y]=QP(4.5,5.1);return [x,y];}
-  const [gx,gy]=QCELLS[qi],[x,y]=QP(gx+.5,gy+.75,.45);return [x,y];
+  const [gx,gy]=QCELLS[qi],[x,y]=QP(gx+.5,gy+.75,QZ);return [x,y];
 }
-$("#isoMap").addEventListener("click",e=>{
-  const t=e.target.closest(".qt.todo");if(!t||!G||G.moving)return;
-  const qi=+t.dataset.q,av=$("#qAv"),[x,y]=avatarAt(qi);
-  G.moving=true;sfx.tap();
-  av.classList.add("hop");av.style.transform=`translate(${x}px,${y}px)`;
-  setTimeout(()=>{G.moving=false;G.qPos=qi;G.i=qi;show("s-game");renderQ();},650);
+// walk tile by tile (along x, then y) instead of sliding straight across the island
+function walkTo(qi){
+  if(!G||G.moving||G.results[qi])return;
+  G.moving=true;sfx.tap();$("#mapTipBox").hidden=true;
+  const av=$("#qAv"),[fx,fy]=G.qPos>=0?QCELLS[G.qPos]:[4,4],[tx,ty]=QCELLS[qi],path=[];
+  let x=fx,y=fy;while(x!==tx){x+=Math.sign(tx-x);path.push([x,y]);}while(y!==ty){y+=Math.sign(ty-y);path.push([x,y]);}
+  const stepMs=Math.max(70,Math.min(140,900/Math.max(1,path.length)));
+  av.style.transition=`transform ${stepMs}ms linear`;av.classList.add("walk");
+  path.forEach(([gx,gy],k)=>setTimeout(()=>{const last=k===path.length-1,on=isQuestCell(gx,gy)&&!(gx===4&&gy===4);
+    const [px,py]=QP(gx+.5,gy+.75,on?QZ:0);av.style.transform=`translate(${px}px,${py}px)`;if(last)sfx.tap();},k*stepMs));
+  setTimeout(()=>{av.classList.remove("walk");G.moving=false;G.qPos=qi;G.i=qi;show("s-game");renderQ();},path.length*stepMs+260);
+}
+$("#isoMap").addEventListener("click",e=>{const t=e.target.closest(".qt.todo");if(t)walkTo(+t.dataset.q);});
+$("#btnNextBlock").onclick=()=>{const n=nearestTodo();if(n>=0)walkTo(n);};
+// hover card: which challenge a block holds
+$("#isoMap").addEventListener("mousemove",e=>{
+  const t=e.target.closest(".qt"),box=$("#mapTipBox");
+  if(!t||G.moving){box.hidden=true;return;}
+  const qi=+t.dataset.q,r=G.results[qi],z=zoneOfQ(qi),w=$("#mapWrap").getBoundingClientRect();
+  box.innerHTML=`<b>Q${qi+1} · ${z.i} ${z.n}</b><span>${esc(QUESTIONS[qi].topic)}${qi>=BONUS_FROM?" · ⭐ Treasure x2":""}${QUESTIONS[qi].type==="order"?" · 🔗 Puzzle":""}</span><em>${r?(r.ok?"✅ Restored":"↻ Retry in Second Chance"):"▶ Tap to play"}</em>`;
+  box.hidden=false;box.style.left=Math.min(e.clientX-w.left+14,w.width-210)+"px";box.style.top=Math.max(8,e.clientY-w.top-70)+"px";
 });
+$("#isoMap").addEventListener("mouseleave",()=>$("#mapTipBox").hidden=true);
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&$("#s-map").classList.contains("active")&&!G.moving){e.preventDefault();$("#btnNextBlock").click();}});
 
 /* ---------- Ecosystem, achievements, toasts ---------- */
 function ecoAlive(i){const r=G.results[i];return !!(r&&r.ok)||G.redeem.some(x=>x.qi===i&&x.ok);}

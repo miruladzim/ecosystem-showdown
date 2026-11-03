@@ -106,6 +106,66 @@
   .how div{background:rgba(3,24,32,.45);border-radius:16px;padding:12px 14px;font-size:15px}
   .how b{display:block;font-family:var(--head);font-size:17px;color:var(--gold)}
 
+  /* ---- LANDING ---- */
+  .landing{display:grid;grid-template-columns:1.08fr 1fr;gap:34px;align-items:center;min-height:calc(100vh - 90px);padding:10px 0}
+  .heroPane h1{text-align:left;font-size:clamp(44px,5.6vw,74px);margin:10px 0 10px}
+  .eyebrow{display:inline-block;font-weight:800;font-size:14px;letter-spacing:.6px;text-transform:uppercase;color:#bbf7d0;background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.4);border-radius:99px;padding:4px 14px}
+  .tagline{font-size:18px;color:#d7ecf5;max-width:52ch;margin:0 0 18px}
+  .tagline b{color:var(--gold)}
+  .heroArt{border-radius:26px;box-shadow:0 24px 50px rgba(0,0,0,.4),0 0 0 2px rgba(255,255,255,.15);line-height:0;animation:rise .6s .1s both}
+  .heroArt svg{width:100%;height:auto;display:block}
+  .heroArt .em{animation:bob 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+  .heroArt .sun{animation:sunPulse 4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+  .heroArt .cloud{animation:cloudDrift 18s linear infinite}
+  .heroArt .cloud.c2{animation-duration:26s;animation-delay:-9s}
+  .heroArt .flyer{animation:fly 7s ease-in-out infinite}
+  .heroArt .flyer.f2{animation:fly2 9s ease-in-out infinite}
+  .heroArt .island{animation:isle 6s ease-in-out infinite}
+  .heroArt .isleShadow{animation:isleShadow 6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+  @keyframes isle{50%{transform:translateY(-7px)}}
+  @keyframes isleShadow{50%{transform:scale(.9);opacity:.15}}
+  @keyframes sunPulse{50%{transform:scale(1.15);opacity:.8}}
+  @keyframes cloudDrift{from{transform:translateX(-160px)}to{transform:translateX(560px)}}
+  @keyframes fly{0%,100%{transform:translate(0,0)}25%{transform:translate(60px,-30px)}50%{transform:translate(110px,10px)}75%{transform:translate(40px,30px)}}
+  @keyframes fly2{0%,100%{transform:translate(0,0)}33%{transform:translate(-50px,-25px)}66%{transform:translate(40px,-45px)}}
+  .statRow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+  .statRow div{background:var(--glass);border:1.5px solid var(--line);border-radius:18px;padding:10px 6px;text-align:center}
+  .statRow b{display:block;font-family:var(--head);font-size:28px;line-height:1.05;color:var(--gold)}
+  .statRow span{font-size:13px;font-weight:800;color:var(--muted)}
+  .playPane{padding:24px}
+  .stepT{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;font-size:20px;margin:4px 0 10px}
+  .stepT span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--gold);color:#4a2c00;font-size:16px;box-shadow:0 3px 0 #a15c07}
+  .playPane .modes{grid-template-columns:1fr;gap:10px;margin:0 0 20px}
+  .playPane .mode{display:flex;align-items:center;gap:14px;padding:12px 14px}
+  .playPane .mode .mi{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:28px;color:#fff;background:linear-gradient(145deg,var(--c1),var(--c2));box-shadow:inset 0 -4px 0 rgba(0,0,0,.2),0 6px 14px rgba(0,0,0,.25)}
+  .playPane .mode .mt{flex:1;min-width:0}
+  .playPane .mode .mt b{font-size:20px;line-height:1.1}
+  .playPane .mode .mt span{font-size:14px}
+  .playPane .mode .tag{font-style:normal;font-size:11.5px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:rgba(56,189,248,.18);color:#bae6fd;border:1px solid rgba(56,189,248,.4)}
+  .playPane .mode .tag.cls{background:rgba(244,114,182,.18);color:#fbcfe8;border-color:rgba(244,114,182,.45)}
+  .playPane .mode.sel::after{top:50%;right:14px;transform:translateY(-50%)}
+  .playPane .mode.sel .tag{visibility:hidden}
+  .playPane .avatars{justify-content:flex-start;margin-bottom:10px}
+  .playPane .av{width:50px;height:50px;font-size:27px;border-radius:16px}
+  .playPane input[type=text]{max-width:none;text-align:left}
+  .playPane .teamNames{margin-top:10px}
+  .ctaCol{display:grid;gap:10px;margin-top:20px}
+  .ctaCol .btn{width:100%}
+  .links{display:flex;justify-content:center;gap:2px;flex-wrap:wrap;margin-top:14px}
+  .links button{font:inherit;font-weight:800;font-size:14px;color:var(--muted);background:transparent;border:0;border-radius:12px;padding:8px 9px;cursor:pointer;white-space:nowrap}
+  .links button:hover{color:var(--text);background:var(--glass2)}
+  @media (max-width:860px){
+    .landing{grid-template-columns:1fr;min-height:0;gap:18px;padding-top:42px}
+    .heroPane{text-align:center}
+    .heroPane h1{text-align:center}
+    .tagline{margin:0 auto 16px}
+  }
+  @media (max-width:600px){
+    .statRow{gap:6px}
+    .statRow b{font-size:22px}.statRow span{font-size:11px}
+    .playPane{padding:16px}
+    .tagline{font-size:16px}
+  }
   /* ---- GAME ---- */
   .hud{display:flex;align-items:center;gap:8px;margin-bottom:12px}
   .hud .sp{flex:1}
@@ -361,6 +421,70 @@
     .ring,.stars,.avatar-big{display:none!important}
     .row.center.sec{display:none!important}
   }
+  /* ---- laptop screens: wide 1920x1080 and short 1366x768 ---- */
+  @media (min-width:1500px){
+    .wrap{max-width:1200px}
+    .fbin{max-width:1200px}
+    .fb .why{max-width:95ch}
+  }
+  @media (min-width:1700px) and (min-height:900px){
+    #s-game,#s-redeem{zoom:1.12}
+  }
+  @media (min-width:900px){
+    .fb{padding-top:12px;padding-bottom:12px}
+    .fb .why{max-width:90ch;font-size:16.5px}
+    .mascot{width:64px;height:64px;font-size:38px}
+  }
+  @media (min-width:900px) and (max-height:820px){
+    body{padding-top:10px;padding-bottom:10px}
+    footer{margin-top:8px}
+    /* home */
+    .landing{min-height:calc(100vh - 62px);gap:28px;padding:0}
+    .heroPane h1{font-size:clamp(40px,4.4vw,58px);margin:6px 0}
+    .eyebrow{font-size:12.5px;padding:3px 12px}
+    .tagline{font-size:16px;margin-bottom:12px}
+    .heroArt{max-width:440px}
+    .statRow{margin-top:12px;max-width:440px}
+    .statRow div{padding:6px 4px}.statRow b{font-size:22px}.statRow span{font-size:12px}
+    .playPane{padding:16px 20px}
+    .stepT{font-size:18px;margin:0 0 8px}
+    .playPane .modes{gap:8px;margin-bottom:12px}
+    .playPane .mode{padding:8px 12px}
+    .playPane .mode .mi{width:42px;height:42px;font-size:23px;border-radius:13px}
+    .playPane .mode .mt b{font-size:18px}.playPane .mode .mt span{font-size:13px}
+    .playPane .av{width:44px;height:44px;font-size:24px}
+    .playPane .avatars{margin-bottom:8px}
+    .playPane input[type=text]{padding:9px 14px;font-size:18px}
+    .ctaCol{margin-top:12px}
+    .ctaCol:has(#btnResume:not([hidden])){grid-template-columns:1fr 1.25fr;align-items:stretch}
+    .ctaCol:has(#btnResume:not([hidden])) .btn{font-size:18px;padding:9px 14px}
+    .teamNames{margin-top:8px}
+    .btn.big-cta{font-size:21px;padding:11px 30px}
+    .links{margin-top:6px}
+    .teamNames{gap:8px}.teamNames label{padding:2px 10px}
+    /* game */
+    .card#gameCard{padding:14px 18px}
+    .hud{margin-bottom:8px}.pill{font-size:16px}.iconbtn{width:36px;height:36px}
+    .teamBar{margin-bottom:8px}.tchip{padding:3px 10px}.tchip .ta{font-size:20px}.tchip .ts{font-size:18px}
+    .dots{margin-bottom:8px}
+    .timer{margin-bottom:8px}
+    .bonus{padding:3px 12px;margin-bottom:8px}
+    .gwrap{grid-template-columns:minmax(0,420px) 1fr;gap:20px}
+    .scene{margin-bottom:10px;border-radius:18px}
+    .q{font-size:clamp(19px,1.9vw,24px)}
+    .speak{width:36px;height:36px;font-size:17px}
+    .answers{gap:8px;margin-bottom:10px}
+    .ans{min-height:52px;font-size:18px;padding:6px 12px 6px 8px}
+    .ans .k{width:38px;height:38px;font-size:18px}
+    .lifelabel{margin-bottom:4px}
+    .life{padding:4px 12px;font-size:15px}
+    .slots{padding:8px;margin-bottom:8px}.slot{height:64px}
+    .tiles{gap:8px;margin-bottom:8px}.tile{padding:6px 12px 6px 6px;font-size:15px}.tile .e{font-size:24px}
+    .eco{margin-top:10px;padding:6px 12px 4px}
+    .eco span{font-size:22px;padding-top:12px}
+    .fb .why{font-size:15.5px}
+    .fb h3{font-size:22px}
+  }
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   }
@@ -380,56 +504,130 @@
 
   <!-- START -->
   <section id="s-start" class="screen active">
-    <div class="card center narrow">
-      <div class="hero" aria-hidden="true"><em>✨</em><span>🌿</span><span>🦉</span><span>🐸</span><em>✨</em></div>
-      <h1>Ecosystem Showdown</h1>
-      <p class="muted">Food chains, food webs &amp; how living things interact</p>
-      <div class="chips"><span class="chip">📘 Form 2 Science</span><span class="chip">❓ 12 challenges</span><span class="chip">⏱ about 10 minutes</span><span class="chip" id="achChip">🏅 0/9 badges</span></div>
-
-      <div class="modes" role="radiogroup" aria-label="Game mode">
-        <button class="mode sel" data-mode="practice" role="radio" aria-checked="true">
-          <b>🌱 Practice</b><span>Solo, no timer. Take your time and learn.</span>
-        </button>
-        <button class="mode" data-mode="challenge" role="radio" aria-checked="false">
-          <b>⚡ Challenge</b><span>Solo, 30s per question. Speed = bonus points!</span>
-        </button>
-        <button class="mode" data-mode="team" role="radio" aria-checked="false">
-          <b>👥 Team Battle</b><span>2–4 teams take turns on one screen. Gameshow style!</span>
-        </button>
-      </div>
-
-      <div class="sec" id="soloSetup">
-        <label class="lbl">Pick your explorer</label>
-        <div class="avatars" id="avatars" role="radiogroup" aria-label="Choose an avatar">
-          <button class="av sel" data-av="🐸" role="radio" aria-checked="true" aria-label="Frog">🐸</button>
-          <button class="av" data-av="🦉" role="radio" aria-checked="false" aria-label="Owl">🦉</button>
-          <button class="av" data-av="🐅" role="radio" aria-checked="false" aria-label="Tiger">🐅</button>
-          <button class="av" data-av="🐝" role="radio" aria-checked="false" aria-label="Bee">🐝</button>
-          <button class="av" data-av="🦈" role="radio" aria-checked="false" aria-label="Shark">🦈</button>
-          <button class="av" data-av="🦋" role="radio" aria-checked="false" aria-label="Butterfly">🦋</button>
+    <div class="landing">
+      <div class="heroPane">
+        <div class="eyebrow">🌿 Form 2 Science · Ecosystems</div>
+        <h1>Ecosystem Showdown</h1>
+        <p class="tagline">The rainforest needs you! Answer correctly to bring <b>12 species</b> back to life, then race your class to the top of the leaderboard.</p>
+        <div class="heroArt" aria-hidden="true">
+          <svg viewBox="0 0 520 330" xmlns="http://www.w3.org/2000/svg"><defs>
+  <linearGradient id="hSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60c5f5"/><stop offset=".75" stop-color="#d9f2ff"/></linearGradient>
+  <radialGradient id="hSun"><stop offset="0" stop-color="#fff7ae"/><stop offset=".55" stop-color="#fde047"/><stop offset="1" stop-color="#fde047" stop-opacity="0"/></radialGradient>
+  <linearGradient id="hWater" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#0284c7"/></linearGradient>
+  <clipPath id="hClip"><rect width="520" height="330" rx="26"/></clipPath>
+</defs>
+<g clip-path="url(#hClip)">
+<rect width="520" height="330" fill="url(#hSky)"/>
+<circle class="sun" cx="440" cy="58" r="56" fill="url(#hSun)"/><circle cx="440" cy="58" r="24" fill="#fde047"/>
+<g class="cloud c1"><ellipse cx="80" cy="50" rx="36" ry="13" fill="#fff" opacity=".9"/><ellipse cx="104" cy="42" rx="22" ry="13" fill="#fff" opacity=".9"/></g>
+<g class="cloud c2"><ellipse cx="320" cy="30" rx="28" ry="10" fill="#fff" opacity=".85"/><ellipse cx="338" cy="24" rx="17" ry="9" fill="#fff" opacity=".85"/></g>
+<ellipse class="isleShadow" cx="260" cy="322" rx="180" ry="8" fill="#0c4a6e" opacity=".22"/>
+<g class="island">
+<polygon points="40.0,177.9 260.0,287.9 260.0,313.2 40.0,203.2" fill="#9a6332"/><polygon points="480.0,177.9 260.0,287.9 260.0,313.2 480.0,203.2" fill="#6e4220"/><polygon points="260.0,67.9 480.0,177.9 260.0,287.9 40.0,177.9" fill="#8b5a2b" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+<polygon points="40.0,168.0 260.0,278.0 260.0,287.9 40.0,177.9" fill="#58a83a"/><polygon points="480.0,168.0 260.0,278.0 260.0,287.9 480.0,177.9" fill="#3f8a2b"/><polygon points="260.0,58.0 480.0,168.0 260.0,278.0 40.0,168.0" fill="#6cc04a" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+<polyline points="40.0,186.7 260.0,296.7 480.0,186.7" fill="none" stroke="#5a3418" stroke-opacity=".35" stroke-width="2"/>
+<polyline points="40.0,194.4 260.0,304.4 480.0,194.4" fill="none" stroke="#5a3418" stroke-opacity=".35" stroke-width="2"/>
+<line x1="282.0" y1="69.0" x2="62.0" y2="179.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="238.0" y1="69.0" x2="458.0" y2="179.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="304.0" y1="80.0" x2="84.0" y2="190.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="216.0" y1="80.0" x2="436.0" y2="190.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="326.0" y1="91.0" x2="106.0" y2="201.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="194.0" y1="91.0" x2="414.0" y2="201.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="348.0" y1="102.0" x2="128.0" y2="212.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="172.0" y1="102.0" x2="392.0" y2="212.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="370.0" y1="113.0" x2="150.0" y2="223.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="150.0" y1="113.0" x2="370.0" y2="223.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="392.0" y1="124.0" x2="172.0" y2="234.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="128.0" y1="124.0" x2="348.0" y2="234.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="414.0" y1="135.0" x2="194.0" y2="245.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="106.0" y1="135.0" x2="326.0" y2="245.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="436.0" y1="146.0" x2="216.0" y2="256.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="84.0" y1="146.0" x2="304.0" y2="256.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="458.0" y1="157.0" x2="238.0" y2="267.0" stroke="#ffffff" stroke-opacity=".10"/>
+<line x1="62.0" y1="157.0" x2="282.0" y2="267.0" stroke="#ffffff" stroke-opacity=".10"/>
+<polygon points="150.0,139.4 220.4,174.6 163.2,203.2 92.8,168.0" fill="#a3d977"/>
+<line x1="145.6" y1="146.0" x2="207.2" y2="176.8" stroke="#5f9e35" stroke-width="2" stroke-opacity=".7"/>
+<line x1="132.4" y1="152.6" x2="194.0" y2="183.4" stroke="#5f9e35" stroke-width="2" stroke-opacity=".7"/>
+<line x1="119.2" y1="159.2" x2="180.8" y2="190.0" stroke="#5f9e35" stroke-width="2" stroke-opacity=".7"/>
+<line x1="106.0" y1="165.8" x2="167.6" y2="196.6" stroke="#5f9e35" stroke-width="2" stroke-opacity=".7"/>
+<polygon points="264.4,179.0 334.8,214.2 334.8,221.9 264.4,186.7" fill="#3f8a2b"/>
+<polygon points="264.4,179.0 194.0,214.2 194.0,221.9 264.4,186.7" fill="#2f6f20"/>
+<polygon points="264.4,186.7 334.8,221.9 264.4,257.1 194.0,221.9" fill="url(#hWater)"/>
+<ellipse cx="268.8" cy="215.3" rx="26" ry="5" fill="#e0f2fe" opacity=".55"/>
+<polygon points="254.5,163.7 264.4,168.7 264.4,171.3 254.5,166.3" fill="#d6d3d1"/><polygon points="274.3,163.7 264.4,168.7 264.4,171.3 274.3,166.3" fill="#a8a29e"/><polygon points="264.4,158.8 274.3,163.7 264.4,168.7 254.5,163.7" fill="#e7e5e4" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+<polygon points="258.9,174.7 268.8,179.7 268.8,182.3 258.9,177.4" fill="#d6d3d1"/><polygon points="278.7,174.7 268.8,179.7 268.8,182.3 278.7,177.4" fill="#a8a29e"/><polygon points="268.8,169.8 278.7,174.7 268.8,179.7 258.9,174.7" fill="#e7e5e4" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+<polygon points="228.1,157.1 238.0,162.1 238.0,164.7 228.1,159.8" fill="#d6d3d1"/><polygon points="247.9,157.1 238.0,162.1 238.0,164.7 247.9,159.8" fill="#a8a29e"/><polygon points="238.0,152.2 247.9,157.1 238.0,162.1 228.1,157.1" fill="#e7e5e4" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+<polygon points="284.2,87.7 304.0,97.6 304.0,113.0 284.2,103.1" fill="#22c55e"/><polygon points="323.8,87.7 304.0,97.6 304.0,113.0 323.8,103.1" fill="#15803d"/><polygon points="304.0,77.8 323.8,87.7 304.0,97.6 284.2,87.7" fill="#4ade80" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+<polygon points="194.0,88.8 211.6,97.6 211.6,132.8 194.0,124.0" fill="#8b5a2b"/><polygon points="229.2,88.8 211.6,97.6 211.6,132.8 229.2,124.0" fill="#6e4220"/><polygon points="211.6,80.0 229.2,88.8 211.6,97.6 194.0,88.8" fill="#a0673a" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+<polygon points="158.8,62.4 211.6,88.8 211.6,119.6 158.8,93.2" fill="#22c55e"/><polygon points="264.4,62.4 211.6,88.8 211.6,119.6 264.4,93.2" fill="#15803d"/><polygon points="211.6,36.0 264.4,62.4 211.6,88.8 158.8,62.4" fill="#4ade80" stroke="rgba(0,0,0,.08)" stroke-width="1"/><polygon points="176.4,44.8 211.6,62.4 211.6,80.0 176.4,62.4" fill="#4ade80"/><polygon points="246.8,44.8 211.6,62.4 211.6,80.0 246.8,62.4" fill="#16a34a"/><polygon points="211.6,27.2 246.8,44.8 211.6,62.4 176.4,44.8" fill="#86efac" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+<polygon points="374.4,152.6 403.0,166.9 403.0,182.3 374.4,168.0" fill="#a8a29e"/><polygon points="425.0,155.9 403.0,166.9 403.0,182.3 425.0,171.3" fill="#78716c"/><polygon points="396.4,141.6 425.0,155.9 403.0,166.9 374.4,152.6" fill="#d6d3d1" stroke="rgba(0,0,0,.08)" stroke-width="1"/><polygon points="407.4,158.1 422.8,165.8 422.8,174.6 407.4,166.9" fill="#a8a29e"/><polygon points="436.0,159.2 422.8,165.8 422.8,174.6 436.0,168.0" fill="#78716c"/><polygon points="420.6,151.5 436.0,159.2 422.8,165.8 407.4,158.1" fill="#e7e5e4" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+<polygon points="282.0,227.4 299.6,236.2 299.6,249.4 282.0,240.6" fill="#22c55e"/><polygon points="317.2,227.4 299.6,236.2 299.6,249.4 317.2,240.6" fill="#15803d"/><polygon points="299.6,218.6 317.2,227.4 299.6,236.2 282.0,227.4" fill="#4ade80" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+<ellipse cx="359.0" cy="127.3" rx="9.1" ry="3.8" fill="#0b3b1a" opacity=".28"/><text class="em" x="359.0" y="124.4" font-size="24" text-anchor="middle" style="animation-delay:-1s">🍄</text>
+<ellipse cx="282.0" cy="143.8" rx="15.2" ry="6.4" fill="#0b3b1a" opacity=".28"/><text class="em" x="282.0" y="139.0" font-size="40" text-anchor="middle" style="animation-delay:-0.6s">🐅</text>
+<ellipse cx="356.8" cy="154.8" rx="10.6" ry="4.5" fill="#0b3b1a" opacity=".28"/><text class="em" x="356.8" y="151.4" font-size="28" text-anchor="middle" style="animation-delay:-2.4s">🐇</text>
+<text class="em" x="147.8" y="159.6" font-size="24" text-anchor="middle" style="animation-delay:-1.4s">🌾</text>
+<text class="em" x="167.6" y="176.1" font-size="24" text-anchor="middle" style="animation-delay:-2s">🌾</text>
+<text class="em" x="136.8" y="178.6" font-size="22" text-anchor="middle" style="animation-delay:-0.8s">🌾</text>
+<text class="em" x="209.4" y="101.7" font-size="30" text-anchor="middle" style="animation-delay:0s">🦉</text>
+<ellipse cx="213.8" cy="210.9" rx="11.4" ry="4.8" fill="#0b3b1a" opacity=".28"/><text class="em" x="213.8" y="207.3" font-size="30" text-anchor="middle" style="animation-delay:-0.3s">🐸</text>
+</g>
+<text class="em" x="110" y="92" font-size="28" text-anchor="middle" style="animation-delay:-1.8s">🦅</text>
+<g class="flyer"><text x="400" y="140" font-size="22" text-anchor="middle">🐝</text></g>
+<g class="flyer f2"><text x="330" y="70" font-size="20" text-anchor="middle">🦋</text></g>
+</g></svg>
         </div>
-        <label class="lbl" for="name">Your name or team name</label>
-        <input id="name" type="text" maxlength="20" placeholder="Type your name" autocomplete="off">
-      </div>
-
-      <div class="sec" id="teamSetup" hidden>
-        <label class="lbl">How many teams?</label>
-        <div class="row center" id="teamCount" role="radiogroup" aria-label="Number of teams">
-          <button class="tc" data-n="2" role="radio">2</button><button class="tc sel" data-n="3" role="radio">3</button><button class="tc" data-n="4" role="radio">4</button>
+        <div class="statRow">
+          <div><b>12</b><span>challenges</span></div>
+          <div><b>3</b><span>game modes</span></div>
+          <div><b id="achNum">0/9</b><span>badges won</span></div>
+          <div><b>~10</b><span>minutes</span></div>
         </div>
-        <div class="teamNames" id="teamNames"></div>
       </div>
 
-      <div class="row center sec">
-        <button class="btn pink resume" id="btnResume" hidden>▶ Continue game</button>
-        <button class="btn big-cta" id="btnStart">▶ Start new game</button>
-      </div>
-      <div class="row center" style="margin-top:14px">
-        <button class="btn secondary" id="btnHow" style="font-size:16px;padding:8px 16px">❓ How to play</button>
-        <button class="btn secondary" id="btnBoard" style="font-size:16px;padding:8px 16px">🏆 Leaderboard</button>
-        <button class="btn secondary" id="btnTeacher" style="font-size:16px;padding:8px 16px">📊 Teacher view</button>
-      </div>
-      <div id="how" class="how">
+      <div class="card playPane">
+        <div class="stepT"><span>1</span>Choose a mode</div>
+        <div class="modes" role="radiogroup" aria-label="Game mode">
+          <button class="mode sel" data-mode="practice" role="radio" aria-checked="true">
+            <span class="mi" style="--c1:#34d399;--c2:#047857">🌱</span><span class="mt"><b>Practice</b><span>No timer. Learn at your own pace.</span></span><em class="tag">Solo</em>
+          </button>
+          <button class="mode" data-mode="challenge" role="radio" aria-checked="false">
+            <span class="mi" style="--c1:#fbbf24;--c2:#c2410c">⚡</span><span class="mt"><b>Challenge</b><span>30 seconds each. Speed earns bonus points!</span></span><em class="tag">Solo</em>
+          </button>
+          <button class="mode" data-mode="team" role="radio" aria-checked="false">
+            <span class="mi" style="--c1:#f472b6;--c2:#7c3aed">👥</span><span class="mt"><b>Team Battle</b><span>2–4 teams take turns on one screen.</span></span><em class="tag cls">Class</em>
+          </button>
+        </div>
+
+        <div class="stepT"><span>2</span>Who's playing?</div>
+        <div id="soloSetup">
+          <div class="avatars" id="avatars" role="radiogroup" aria-label="Choose an avatar">
+            <button class="av sel" data-av="🐸" role="radio" aria-checked="true" aria-label="Frog">🐸</button>
+            <button class="av" data-av="🦉" role="radio" aria-checked="false" aria-label="Owl">🦉</button>
+            <button class="av" data-av="🐅" role="radio" aria-checked="false" aria-label="Tiger">🐅</button>
+            <button class="av" data-av="🐝" role="radio" aria-checked="false" aria-label="Bee">🐝</button>
+            <button class="av" data-av="🦈" role="radio" aria-checked="false" aria-label="Shark">🦈</button>
+            <button class="av" data-av="🦋" role="radio" aria-checked="false" aria-label="Butterfly">🦋</button>
+          </div>
+          <input id="name" type="text" maxlength="20" placeholder="Type your name" autocomplete="off" aria-label="Your name">
+        </div>
+        <div id="teamSetup" hidden>
+          <div class="row" id="teamCount" role="radiogroup" aria-label="Number of teams">
+            <span class="muted" style="font-weight:800;margin-right:4px">Teams:</span>
+            <button class="tc" data-n="2" role="radio">2</button><button class="tc sel" data-n="3" role="radio">3</button><button class="tc" data-n="4" role="radio">4</button>
+          </div>
+          <div class="teamNames" id="teamNames"></div>
+        </div>
+
+        <div class="ctaCol">
+          <button class="btn pink resume" id="btnResume" hidden>▶ Continue game</button>
+          <button class="btn big-cta" id="btnStart">▶ Start new game</button>
+        </div>
+        <div class="links">
+          <button id="btnHow">❓ How to play</button>
+          <button id="btnBoard">🏆 Leaderboard</button>
+          <button id="btnTeacher">📊 Teacher view</button>
+        </div>
+        <div id="how" class="how">
         <div><b>⭐ Score points</b>Each correct answer = 100 points. Build a 🔥 streak for +20 per level.</div>
         <div><b>🌍 Grow your ecosystem</b>Every correct answer brings a new species to life in your world.</div>
         <div><b>🔗 Puzzle challenge</b>Some challenges ask you to build a food chain in the right order.</div>
@@ -439,6 +637,7 @@
         <div><b>🎁 Bonus round</b>Questions 10–12 are worth double points!</div>
         <div><b>🔁 Second chance</b>Missed some? Fix them at the end for 50 points each.</div>
         <div style="grid-column:1/-1"><b>🔈 Tips</b>Tap the speaker to hear a question read aloud. On a keyboard, number keys pick an answer and Enter moves on. Tap 🏠 any time: your progress is saved and you can continue later.</div>
+      </div>
       </div>
     </div>
   </section>
@@ -621,8 +820,15 @@ const QUESTIONS=[
  {eco:"🐇", topic:"Food chains & webs", q:"Many food chains linked together, like in the picture, form a…",
   a:["Food web","Habitat","Population","Niche"], hint:"It looks like a spider's web of feeding links.",
   why:"A food web is made of many food chains linked together. It shows that most animals eat, and are eaten by, more than one kind of organism.",
-  scene:()=>svg(SKY("#a7f3d0","#ecfdf5","#4d7c0f")+E(200,165,"🌾",34)+E(80,110,"🦗",34)+E(200,105,"🐇",34)+E(320,110,"🐛",34)+E(120,40,"🐸",32)+E(280,40,"🐍",34)+E(200,30,"🦅",34)+
-   A(195,150,90,125)+A(200,150,200,125)+A(205,150,310,125)+A(85,95,115,58)+A(310,95,285,58)+A(215,95,275,52)+A(130,40,262,40)+A(290,28,218,28))},
+  scene:()=>{
+   // tiered food web: arrows run from food to eater and stop at each organism's edge, so none overlap or cross
+   const N={grass:[200,176],hopper:[75,128],rabbit:[200,128],mouse:[325,128],frog:[115,80],snake:[285,80],eagle:[200,30]};
+   const L=(a,b)=>{const[x1,y1]=N[a],[x2,y2]=N[b],d=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/d,uy=(y2-y1)/d;
+     return A(x1+ux*20,y1+uy*20,x2-ux*23,y2-uy*23);};
+   return svg(SKY("#a7f3d0","#ecfdf5","#4d7c0f")+
+    L("grass","hopper")+L("grass","rabbit")+L("grass","mouse")+L("hopper","frog")+L("rabbit","snake")+L("mouse","snake")+L("frog","eagle")+L("rabbit","eagle")+L("snake","eagle")+
+    E(200,176,"🌾",32)+E(75,128,"🦗",32)+E(200,128,"🐇",32)+E(325,128,"🐁",32)+E(115,80,"🐸",32)+E(285,80,"🐍",32)+E(200,30,"🦅",32)+
+    `<text x="10" y="193" font-size="12" fill="#ecfdf5" font-family="Baloo 2" font-weight="700">Arrow = "is eaten by"</text>`);}},
  {eco:"🐸", topic:"Food chains & webs", q:"In this paddy field, all the frogs die. What will most likely happen to the grasshoppers?",
   a:["Their number increases","Their number decreases","Their number stays the same","They all die"], hint:"Who eats the grasshoppers?",
   why:"Their number increases. Frogs eat grasshoppers. With no frogs, fewer grasshoppers are eaten, so more of them survive and breed, at least until their food (the paddy) runs short.",
@@ -958,7 +1164,7 @@ function unlock(id){
   setTimeout(()=>{toast(a.i,"Badge unlocked: "+a.n,a.d);sfx.badge();},350);
 }
 function fireToast(t){toast("🔥","ON FIRE!",`${teamMode()?t.n+" has":"You have"} ${t.streak} correct in a row!`,"fire");sfx.fire();}
-function syncAch(){$("#achChip").textContent=`🏅 ${achAll.length}/${ACH.length} badges`;}
+function syncAch(){$("#achNum").textContent=`${achAll.length}/${ACH.length}`;}
 
 /* lifelines (each team has its own set) */
 function useLife(key,name){const L=T().lifes;if(G.locked||!L[key])return false;L[key]=false;G.usedL.push(name);sfx.life();return true;}

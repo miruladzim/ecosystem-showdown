@@ -479,6 +479,35 @@
     .row.center.sec{display:none!important}
   }
 
+
+  /* ---- ISLAND QUEST ---- */
+  .playPane .mode .tag.d3{background:rgba(56,189,248,.2);color:#e0f2fe;border-color:rgba(56,189,248,.55)}
+  .mapBar{height:10px;border-radius:99px;background:rgba(3,24,32,.6);overflow:hidden;margin:0 0 10px;border:1px solid var(--line)}
+  .mapBar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mint),var(--gold));transition:width .6s}
+  .mapWrap{border-radius:22px;overflow:hidden;line-height:0;border:2px solid rgba(255,255,255,.18);box-shadow:0 14px 34px rgba(0,0,0,.35);background:linear-gradient(180deg,#7dd3fc,#e0f2fe)}
+  #isoMap{width:100%;height:auto;max-height:calc(100vh - 232px);display:block}
+  #isoMap .qt{cursor:default}
+  #isoMap .qt.todo{cursor:pointer}
+  #isoMap .qt.todo:hover{transform:translateY(-6px)}
+  #isoMap .qt{transition:transform .2s}
+  #isoMap .glow{animation:qGlow 1.5s ease-in-out infinite}
+  @keyframes qGlow{50%{stroke-opacity:.15}}
+  #isoMap .ghost{filter:grayscale(1);opacity:.6}
+  #isoMap .alive{animation:bob 3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+  #isoMap .fresh{animation:sprout .9s cubic-bezier(.2,1.6,.4,1) both;transform-box:fill-box;transform-origin:center bottom}
+  #qAv{transition:transform .6s cubic-bezier(.45,1.3,.5,1);pointer-events:none}
+  #qAv text{transform-box:fill-box;transform-origin:center bottom}
+  #qAv.hop text{animation:qHop .6s ease}
+  @keyframes qHop{45%{transform:translateY(-30px) scale(1.1)}}
+  .mapLegend{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:13px;font-weight:800}
+  .mapLegend .c{padding:3px 10px;border-radius:99px;background:var(--glass2);border:1px solid var(--line)}
+  .mapLegend .muted{flex-basis:100%;font-weight:700}
+  @media (min-width:900px){
+    .playPane .modes{grid-template-columns:1fr 1fr}
+    .playPane .mode{align-items:flex-start}
+    .playPane .mode .tag{display:none}
+    .playPane .mode.sel::after{top:10px;right:10px;transform:none;width:20px;height:20px;font-size:12px}
+  }
   /* ---- compact layouts (results, profile, teacher, how-to) ---- */
   .rHero{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center}
   .rLeft{text-align:center}
@@ -689,7 +718,7 @@
         </div>
         <div class="statRow">
           <div><b>24</b><span>challenges</span></div>
-          <div><b>3</b><span>game modes</span></div>
+          <div><b>4</b><span>game modes</span></div>
           <div><b>9</b><span>badges to win</span></div>
           <div><b>~15</b><span>minutes</span></div>
         </div>
@@ -706,6 +735,9 @@
           </button>
           <button class="mode" data-mode="team" role="radio" aria-checked="false">
             <span class="mi" style="--c1:#f472b6;--c2:#7c3aed">👥</span><span class="mt"><b>Team Battle</b><span>2–4 teams take turns on one screen.</span></span><em class="tag cls">Class</em>
+          </button>
+          <button class="mode" data-mode="quest" role="radio" aria-checked="false">
+            <span class="mi" style="--c1:#38bdf8;--c2:#0f766e">🏝️</span><span class="mt"><b>Island Quest</b><span>Explore a 3D island and restore it, one challenge at a time.</span></span><em class="tag d3">3D</em>
           </button>
         </div>
 
@@ -744,6 +776,7 @@
         <div><b>🌍 Grow your ecosystem</b>Every correct answer brings a new species to life in your world.</div>
         <div><b>🔗 Puzzle challenge</b>Some challenges ask you to build a food chain in the right order.</div>
         <div><b>👥 Team Battle</b>Teams take turns. Each team has its own score and lifelines.</div>
+        <div><b>🏝️ Island Quest</b>Explore a 3D island. Tap any block to take its challenge and bring it back to life.</div>
         <div><b>🆘 Lifelines</b>50:50, Hint and +15s (timed modes). One use each.</div>
         <div><b>🏅 Badges</b>Unlock 9 achievements, like a 5-answer streak or a perfect game.</div>
         <div><b>🎁 Bonus round</b>The last 3 questions are worth double points!</div>
@@ -785,6 +818,25 @@
         </div>
       </div>
       <div class="eco" id="eco" aria-label="Your ecosystem"></div>
+    </div>
+  </section>
+
+  <!-- ISLAND QUEST MAP -->
+  <section id="s-map" class="screen">
+    <div class="card" id="mapCard">
+      <div class="hud">
+        <button class="iconbtn" id="btnMapHome" title="Home (progress is saved)" aria-label="Home, progress is saved">🏠</button>
+        <span class="pill">🏝️ Island Quest</span>
+        <span class="sp"></span>
+        <span class="pill" id="mapProg">🌱 0/24 restored</span>
+        <span class="pill gold" id="mapScore">⭐ 0</span>
+      </div>
+      <div class="mapBar"><i id="mapBarFill"></i></div>
+      <div class="mapWrap"><svg id="isoMap" viewBox="24 34 712 424" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Island map. Tap a glowing block to start its challenge."></svg></div>
+      <div class="mapLegend">
+        <span class="c">🌲 Forest · Food chains</span><span class="c">🐸 Wetland · Interactions</span><span class="c">🌾 Farm · Balance &amp; cycles</span><span class="c">⭐ Treasure = double points</span>
+        <span class="muted" id="mapTip">Tap any glowing block. Your explorer walks there and the challenge begins.</span>
+      </div>
     </div>
   </section>
 
@@ -1120,7 +1172,7 @@ const ACH=[
 let G=null, timerId=null, ovTimer=null, mode="practice";
 const teamMode=()=>G.mode==="team";
 const T=()=>G.teams[G.cur];
-const timed=()=>G.mode!=="practice"&&G.phase!=="redeem";
+const timed=()=>(G.mode==="challenge"||G.mode==="team")&&G.phase!=="redeem";   // Practice and Island Quest are untimed
 
 function newGame(){
   store.set("es_mode",mode);
@@ -1135,7 +1187,9 @@ function startGame(){
   // only one game can be saved per browser, so don't silently wipe another player's progress
   const s=validSave();
   if(s&&!confirm(`Start a new game? The saved game for ${s.mode==="team"?"Team Battle":s.teams[0].n} will be replaced.`))return;
-  G=newGame();store.set("es_save",null);show("s-game");renderQ();
+  G=newGame();store.set("es_save",null);
+  if(G.mode==="quest"){G.qPos=-1;renderMap();return;}
+  show("s-game");renderQ();
 }
 function curQ(){return G.queue[G.i];}
 
@@ -1153,12 +1207,13 @@ function syncResume(){
   const s=validSave(),b=$("#btnResume");
   if(!s){b.hidden=true;return;}
   const who=s.mode==="team"?"👥 Team Battle":`${s.teams[0].av} ${s.teams[0].n}`;
-  const where=s.phase==="redeem"?"Second Chance":`Q${Math.min(s.i+(s.answered?2:1),TOTAL)} of ${TOTAL}`;
+  const where=s.phase==="redeem"?"Second Chance":s.mode==="quest"?`🏝️ ${s.results.filter(r=>r&&r.ok).length}/${TOTAL} restored`:`Q${Math.min(s.i+(s.answered?2:1),TOTAL)} of ${TOTAL}`;
   b.innerHTML=`▶ Continue game <small>${esc(who)} · ${where}</small>`;b.hidden=false;
 }
 function resumeGame(){
   const s=validSave();if(!s){syncResume();return;}
   G=s;G.locked=true;
+  if(G.mode==="quest"&&G.phase==="main"&&(G.atMap||G.answered)){renderMap();return;}
   if(G.phase==="redeemIntro"){$("#missCount").textContent=G.missed.length;show("s-redeem");return;}
   show("s-game");
   if(G.answered){G.locked=true;next();} else renderQ();
@@ -1208,7 +1263,8 @@ function renderQ(){
   $("#l50").textContent=Q.type==="order"?"✂️ Place 2":"✂️ 50:50";
   $("#l50").disabled=!L.fifty;$("#lHint").disabled=!L.hint;$("#lTime").disabled=!L.time;$("#lTime").hidden=!timed();
   $("#timer").style.display=timed()?"flex":"none";G.timeLeft=TIME;if(timed())updTimer();
-  const first=G.i===0&&G.phase==="main";
+  G.atMap=false;
+  const first=G.i===0&&G.phase==="main"&&G.mode!=="quest";
   if(first&&teamMode()) countdown(()=>turnSplash(go));
   else if(first) countdown(go);
   else if(teamMode()&&!redeem) turnSplash(go);
@@ -1333,7 +1389,8 @@ function resolve(ok,chosen,timeout){
   $("#fbMascot").textContent=ok?(t.streak>=3?"🤩":"🦉"):(timeout?"⏰":"🤔");
   const last=G.i+1>=G.queue.length;
   const nt=teamMode()&&!redeem&&!last?G.teams[(G.i+1)%G.teams.length]:null;
-  $("#btnNext").textContent=last?"Finish ➜":nt?`Pass to ${nt.av} ➜`:"Next ➜";
+  const qm=G.mode==="quest"&&!redeem;
+  $("#btnNext").textContent=qm?(G.results.every(Boolean)?"Finish ➜":"🏝️ Back to island ➜"):last?"Finish ➜":nt?`Pass to ${nt.av} ➜`:"Next ➜";
   $("#fb").className="fb "+(ok?"ok":"no");
   document.documentElement.style.setProperty("--sheet",($("#fb").offsetHeight+28)+"px");
   document.body.classList.add("fb-open");
@@ -1352,6 +1409,11 @@ function resolve(ok,chosen,timeout){
 function next(){
   if(!G||!G.answered)return;
   try{speechSynthesis.cancel()}catch(e){}
+  // Island Quest: go back to the map until every block has been tried
+  if(G.mode==="quest"&&G.phase==="main"){
+    if(!G.results.every(Boolean)){renderMap(curQ());return;}
+    G.i=G.queue.length;
+  }
   G.i++;
   if(G.i<G.queue.length){renderQ();return;}
   if(G.phase==="main"&&!teamMode()){
@@ -1361,6 +1423,66 @@ function next(){
   finish();
 }
 function startRedeem(){G.phase="redeem";G.queue=G.missed;G.i=0;G.cur=0;show("s-game");renderQ();}
+
+
+/* ---------- Island Quest: isometric voxel map ---------- */
+const QN=9,QA=38,QB=19,QH=24,QCX=380,QCY=78;
+const QP=(gx,gy,gz=0)=>[QCX+(gx-gy)*QA,QCY+(gx+gy)*QB-gz*QH];
+const qpoly=(pts,fill,extra="")=>`<polygon points="${pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ")}" fill="${fill}"${extra}/>`;
+function qcube(gx,gy,gz,w,d,h,c){const t=gz+h;
+  return qpoly([QP(gx,gy+d,t),QP(gx+w,gy+d,t),QP(gx+w,gy+d,gz),QP(gx,gy+d,gz)],c[1])
+    +qpoly([QP(gx+w,gy,t),QP(gx+w,gy+d,t),QP(gx+w,gy+d,gz),QP(gx+w,gy,gz)],c[2])
+    +qpoly([QP(gx,gy,t),QP(gx+w,gy,t),QP(gx+w,gy+d,t),QP(gx,gy+d,t)],c[0],' stroke="rgba(0,0,0,.12)"');}
+// 24 challenge blocks on a checkerboard around the camp in the middle; questions are ordered by topic, so the
+// forest (food chains) sits at the back, the wetland (interactions) in the middle and the farm (balance) at the front
+const QCELLS=[];
+for(let gy=1;gy<QN-1;gy++)for(let gx=1;gx<QN-1;gx++)if((gx+gy)%2===0&&!(gx===4&&gy===4))QCELLS.push([gx,gy]);
+const QZONE={"Food chains & webs":["#4ade80","#22c55e","#15803d"],"Interactions":["#5eead4","#14b8a6","#0f766e"],"Balance & cycles":["#fde047","#eab308","#a16207"]};
+const QDEAD=["#cbd5e1","#94a3b8","#64748b"],QWILT=["#d6a77a","#b07a4a","#7c4a1e"];
+const QTREES=[[0,2],[0,6],[2,8],[6,8],[8,3],[8,6],[3,0],[7,0],[0,4],[5,8]];
+function renderMap(fresh=-1){
+  G.atMap=true;G.moving=false;
+  const ok=G.results.filter(r=>r&&r.ok).length,done=G.results.filter(Boolean).length;
+  $("#mapProg").textContent=`🌱 ${ok}/${TOTAL} restored`;$("#mapScore").textContent="⭐ "+T().score;
+  $("#mapBarFill").style.width=(done/TOTAL*100)+"%";
+  $("#mapTip").textContent=done?`${TOTAL-done} block${TOTAL-done===1?"":"s"} left. Wilted blocks come back in the Second Chance round.`:"Tap any glowing block. Your explorer walks there and the challenge begins.";
+  let svg=`<defs><linearGradient id="qSea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#e0f2fe"/></linearGradient></defs>
+    <rect width="760" height="470" fill="url(#qSea)"/><ellipse cx="380" cy="458" rx="300" ry="10" fill="#0c4a6e" opacity=".18"/>`;
+  svg+=qcube(0,0,-1.35,QN,QN,1,["#8b5a2b","#9a6332","#6e4220"])+qcube(0,0,-.35,QN,QN,.35,["#7cc85a","#5fae3f","#3f8a2b"]);
+  for(let k=1;k<QN;k++){const a=QP(k,0),b=QP(k,QN),c=QP(0,k),d=QP(QN,k);
+    svg+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#fff" stroke-opacity=".12"/><line x1="${c[0]}" y1="${c[1]}" x2="${d[0]}" y2="${d[1]}" stroke="#fff" stroke-opacity=".12"/>`;}
+  const items=[];
+  QTREES.forEach(([gx,gy])=>items.push([gx+gy,qcube(gx+.38,gy+.38,0,.24,.24,.7,["#a0673a","#8b5a2b","#6e4220"])+qcube(gx+.15,gy+.15,.6,.7,.7,.75,["#4ade80","#22c55e","#15803d"])]));
+  {const [x,y]=QP(4.5,4.5);items.push([8.9,`<text x="${x}" y="${y-2}" font-size="34" text-anchor="middle">🏕️</text>`]);}
+  QCELLS.forEach(([gx,gy],qi)=>{
+    const Q=QUESTIONS[qi],r=G.results[qi],st=r?(r.ok?"ok":"bad"):"todo";
+    const col=st==="ok"?QZONE[Q.topic]:st==="bad"?QWILT:QDEAD;
+    const [x,y]=QP(gx+.5,gy+.5,.45),top=[QP(gx+.08,gy+.08,.45),QP(gx+.92,gy+.08,.45),QP(gx+.92,gy+.92,.45),QP(gx+.08,gy+.92,.45)];
+    let g=`<g class="qt ${st}" data-q="${qi}"><title>Q${qi+1} · ${esc(Q.topic)}${st==="ok"?" · restored":st==="bad"?" · try again in Second Chance":""}</title>`
+      +qcube(gx+.08,gy+.08,0,.84,.84,.45,col);
+    if(st==="todo")g+=qpoly(top,"none",' class="glow" stroke="#ffd24a" stroke-width="3"');
+    g+=`<text x="${x}" y="${y-4}" font-size="${st==="ok"?34:30}" text-anchor="middle" class="${st==="ok"?(qi===fresh?"fresh":"alive"):"ghost"}" style="animation-delay:${-(qi%5)*.6}s">${Q.eco}</text>`;
+    if(st==="bad")g+=`<text x="${x+16}" y="${y-22}" font-size="15" text-anchor="middle" fill="#b91c1c" font-weight="900">↻</text>`;
+    if(qi>=BONUS_FROM)g+=`<text x="${x+17}" y="${y-24}" font-size="15" text-anchor="middle">⭐</text>`;
+    items.push([gx+gy+.5,g+`</g>`]);
+  });
+  items.sort((a,b)=>a[0]-b[0]).forEach(i=>svg+=i[1]);
+  const [ax,ay]=avatarAt(G.qPos);
+  svg+=`<g id="qAv" style="transform:translate(${ax}px,${ay}px)"><ellipse cx="0" cy="0" rx="14" ry="5" fill="#0b3b1a" opacity=".3"/><text x="0" y="-8" font-size="42" text-anchor="middle">${G.teams[0].av}</text></g>`;
+  $("#isoMap").innerHTML=svg;
+  show("s-map");saveGame();
+}
+function avatarAt(qi){
+  if(qi==null||qi<0){const [x,y]=QP(4.5,5.1);return [x,y];}
+  const [gx,gy]=QCELLS[qi],[x,y]=QP(gx+.5,gy+.75,.45);return [x,y];
+}
+$("#isoMap").addEventListener("click",e=>{
+  const t=e.target.closest(".qt.todo");if(!t||!G||G.moving)return;
+  const qi=+t.dataset.q,av=$("#qAv"),[x,y]=avatarAt(qi);
+  G.moving=true;sfx.tap();
+  av.classList.add("hop");av.style.transform=`translate(${x}px,${y}px)`;
+  setTimeout(()=>{G.moving=false;G.qPos=qi;G.i=qi;show("s-game");renderQ();},650);
+});
 
 /* ---------- Ecosystem, achievements, toasts ---------- */
 function ecoAlive(i){const r=G.results[i];return !!(r&&r.ok)||G.redeem.some(x=>x.qi===i&&x.ok);}
@@ -1421,7 +1543,7 @@ function finish(){
     $("#rMsg").textContent=`The class got ${first} / ${TOTAL} right first time and brought ${first} species to life.`+(G.best>=3?` Best streak: 🔥${G.best}!`:"");
   }else{
     $("#rAvatar").textContent=G.av;
-    $("#rName").textContent=G.name+" · "+(G.mode==="challenge"?"⚡ Challenge":"🌱 Practice")+" mode";
+    $("#rName").textContent=G.name+" · "+({challenge:"⚡ Challenge",quest:"🏝️ Island Quest"}[G.mode]||"🌱 Practice")+" mode";
     $("#rPodium").hidden=true;
     $("#rMsg").textContent=`You got ${first} / ${TOTAL} right first time`+(G.redeem.length?` and fixed ${fixed} of ${G.redeem.length} in the Second Chance round.`:".")+(G.best>=3?` Best streak: 🔥${G.best}!`:"");
   }
@@ -1477,7 +1599,7 @@ function buildReports(first,fixed,pct,topics,ranked){
   const used=[...new Set(G.usedL)];
   const times=G.results.filter(Boolean).map(r=>r.time||0), avgT=times.length?(times.reduce((a,b)=>a+b,0)/times.length).toFixed(1):"-";
   const focus=tp.slice().sort((a,b)=>a.p-b.p)[0];
-  const modeName={practice:"Practice",challenge:"Challenge",team:"Team Battle"}[G.mode];
+  const modeName={practice:"Practice",challenge:"Challenge",team:"Team Battle",quest:"Island Quest"}[G.mode];
   $("#repTeacher").innerHTML=
     `<p><b>${esc(G.name)}</b> · ${modeName} mode · ${esc(date)}</p>
      <h4>Summary</h4>
@@ -1498,7 +1620,7 @@ function setTab(w){const s=w==="stu";$("#repStudent").hidden=!s;$("#repTeacher")
 
 function renderBoard(){
   const b=store.get("es_board",[]).slice(0,10);
-  const icon={challenge:"⚡",practice:"🌱",team:"👥"};
+  const icon={challenge:"⚡",practice:"🌱",team:"👥",quest:"🏝️"};
   $("#boardBody").innerHTML=b.length?b.map((r,i)=>`<tr class="${i===0?"top1":""}"><td>${["🥇","🥈","🥉"][i]||i+1}</td><td>${esc(r.a||"🐸")} ${esc(r.n)}</td><td>${icon[r.m]||"🌱"}</td><td><b>${r.s}</b></td></tr>`).join("")
     :`<tr><td colspan="4" class="muted">No scores yet. Be the first!</td></tr>`;
   show("s-board");
@@ -1557,7 +1679,7 @@ function openProfile(name){
   if(tAvg[weak]<100) fb.push(["🎯",`Focus next on <b>${esc(weak)}</b> (${tAvg[weak]}%).`]);
   if(miss[worstQ]>0) fb.push(["📚",`Most missed: <b>Q${worstQ+1}</b>. Key idea: ${(w=>esc(w[0].length<30?w.slice(0,2).join(" "):w[0]))(QUESTIONS[worstQ].why.split(/(?<=\.)\s/))}`]);
   fb.push(overall>=85?["🏆","Ecosystem expert! Aim for a perfect game or teach a friend."]:overall>=60?["🦉","Good progress. Replay to turn the missed ideas into strengths."]:["🌱","Keep practising in Practice mode. Use the Hint lifeline and read every explanation."]);
-  const last=g.slice(-10),mIcon={practice:"🌱",challenge:"⚡"};
+  const last=g.slice(-10),mIcon={practice:"🌱",challenge:"⚡",quest:"🏝️"};
   $("#pBody").innerHTML=`<div class="pGrid"><div class="pCol">
     <div class="rings">${ring(overall,"Overall accuracy","var(--gold)","average")}${topics.map((t,i)=>ring(tAvg[t],t,["var(--mint)","var(--sky)","var(--violet)"][i%3])).join("")}</div>
     <div class="pStats"><div><b>${n}</b><span>games</span></div><div><b>${Math.max(...g.map(x=>x.s))}</b><span>best score</span></div>
@@ -1596,7 +1718,7 @@ document.body.appendChild($("#how"));   // the play card's backdrop-filter would
 $("#howX").onclick=()=>$("#how").classList.remove("open");
 document.addEventListener("click",e=>{const h=$("#how");if(h.classList.contains("open")&&!h.contains(e.target))h.classList.remove("open");});
 $("#tabStu").onclick=()=>setTab("stu");$("#tabTea").onclick=()=>setTab("tea");$("#btnPrint").onclick=()=>{document.querySelectorAll(".acc").forEach(d=>d.open=true);window.print();};
-$("#btnQuit").onclick=goHome;$("#btnRedeemHome").onclick=goHome;$("#btnResume").onclick=resumeGame;
+$("#btnQuit").onclick=goHome;$("#btnMapHome").onclick=goHome;$("#btnRedeemHome").onclick=goHome;$("#btnResume").onclick=resumeGame;
 $("#btnNext").onclick=next;
 $("#btnRedeem").onclick=startRedeem;
 $("#btnSkipRedeem").onclick=finish;
@@ -1627,7 +1749,7 @@ document.addEventListener("keydown",e=>{
 });
 try{localStorage.removeItem("es_name");localStorage.removeItem("es_ach");}catch(e){}   // drop data older versions kept across players
 syncAvatars();syncToggles();syncResume();
-setMode(["practice","challenge","team"].includes(store.get("es_mode","practice"))?store.get("es_mode","practice"):"practice");
+setMode(["practice","challenge","team","quest"].includes(store.get("es_mode","practice"))?store.get("es_mode","practice"):"practice");
 
 </script>
 </body>

@@ -408,6 +408,11 @@
   .pEmpty div{font-size:54px}
   @media (max-width:600px){.pStats{grid-template-columns:1fr 1fr}.rings{gap:6px}.prRing::before{-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px));mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px))}}
 
+  .dlg{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:rgba(2,20,28,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .dlg[hidden]{display:none}
+  .dlgBox{width:min(92vw,440px);background:#0b3a47;border:1.5px solid var(--line);border-radius:22px;padding:22px 22px 18px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5);animation:zoomIn .25s both}
+  .dlgIcon{font-size:40px;line-height:1}
+  .dlgBox p{font-size:17px;font-weight:800;margin:10px 0 16px}
   /* ---- BOARD / TEACHER ---- */
   table{width:100%;border-collapse:separate;border-spacing:0 8px;font-size:17px}
   th{color:var(--muted);font-weight:800;text-align:left;padding:0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.8px}
@@ -994,6 +999,10 @@
 <div class="confetti" id="confetti"></div>
 <div class="overlay" id="overlay" hidden><div class="ovin" id="ovin"></div></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="dlg" id="dlg" hidden role="dialog" aria-modal="true" aria-labelledby="dlgMsg">
+  <div class="dlgBox"><div class="dlgIcon" id="dlgIcon">💾</div><p id="dlgMsg"></p>
+    <div class="row center"><button class="btn secondary" id="dlgNo">Cancel</button><button class="btn" id="dlgYes">OK</button></div></div>
+</div>
 
 <script>
 /* ---------- Illustrations (original SVG scenes built from emoji) ---------- */
@@ -1213,10 +1222,20 @@ function newGame(){
   return {mode,teams,cur:0,i:0,results:Array(TOTAL).fill(null),redeem:[],phase:"main",queue:[...Array(TOTAL).keys()],
     locked:true,answered:false,timeLeft:TIME,order:[],ach:[],usedL:[]};
 }
+// the game's own confirmation window: the browser's confirm() is blocked, or silently answers "Cancel", in some browsers
+function askConfirm(icon,msg,yes,onYes){
+  $("#dlgIcon").textContent=icon;$("#dlgMsg").textContent=msg;$("#dlgYes").textContent=yes;$("#dlg").hidden=false;
+  const close=()=>{$("#dlg").hidden=true;};
+  $("#dlgYes").onclick=()=>{close();onYes();};$("#dlgNo").onclick=close;$("#dlg").onclick=e=>{if(e.target.id==="dlg")close();};
+  $("#dlgYes").focus();
+}
 function startGame(){
   // only one game can be saved per browser, so don't silently wipe another player's progress
   const s=validSave();
-  if(s&&!confirm(`Start a new game? The saved game for ${s.mode==="team"?"Team Battle":s.teams[0].n} will be replaced.`))return;
+  if(s){askConfirm("💾",`Start a new game? The saved game for ${s.mode==="team"?"Team Battle":s.teams[0].n} will be replaced.`,"▶ Start new game",beginNewGame);return;}
+  beginNewGame();
+}
+function beginNewGame(){
   G=newGame();store.set("es_save",null);
   if(G.mode==="quest"){G.qPos=-1;renderMap();return;}
   show("s-game");renderQ();
@@ -1823,7 +1842,8 @@ $("#btnBoard").onclick=renderBoard;$("#btnBoard2").onclick=renderBoard;
 $("#btnTeacher").onclick=renderTeacher;
 $("#btnProfile").onclick=()=>openProfile($("#name").value);
 $("#btnMyProfile").onclick=()=>openProfile(G.teams[0].n);
-$("#btnReset").onclick=()=>{if(confirm("Clear all class results, player profiles and the leaderboard on this device?")){store.set("es_attempts",[]);store.set("es_board",[]);store.set("es_profiles",{});renderTeacher();}};
+$("#btnReset").onclick=()=>askConfirm("🗑️","Clear all class results, player profiles and the leaderboard on this device?","Clear data",()=>{store.set("es_attempts",[]);store.set("es_board",[]);store.set("es_profiles",{});renderTeacher();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#dlg").hidden)$("#dlg").hidden=true;});
 $("#btnCopy").onclick=async()=>{try{await navigator.clipboard.writeText(G.summary);$("#copyMsg").textContent="Copied! Paste it into Google Classroom or WhatsApp for your teacher.";}
   catch(e){$("#copyMsg").textContent=G.summary;}};
 $("#btnSpeak").onclick=()=>speak(readText());

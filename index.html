@@ -292,6 +292,8 @@
   .slots{display:flex;flex-wrap:nowrap;align-items:center;gap:3px;margin-bottom:12px;padding:12px;border-radius:18px;background:rgba(3,24,32,.45);border:2px dashed var(--line)}
   .slot{flex:1 1 0;min-width:0;max-width:76px;height:72px;border-radius:16px;border:2px dashed rgba(255,255,255,.35);display:grid;place-items:center;text-align:center;font-size:30px;line-height:1;cursor:pointer;background:rgba(255,255,255,.05);position:relative;transition:all .2s}
   .slot small{display:block;font-size:10.5px;font-weight:800;margin-top:3px;color:var(--muted)}
+  .slot .multi{font-size:19px;white-space:nowrap;letter-spacing:-2px}
+  .slot .multi small{letter-spacing:0}
   .slot.filled{border-style:solid;border-color:var(--sky);background:rgba(56,189,248,.16);animation:pop .3s both}
   .slot.ok{border-color:var(--mint);background:rgba(52,211,153,.3)}
   .slot.bad{border-color:var(--coral);background:rgba(251,113,133,.3);animation:shakeX .4s both}
@@ -930,7 +932,7 @@ const QUESTIONS=[
   a:["The Sun","Soil","Water","Wind"], hint:"Plants need it for photosynthesis.",
   why:"The Sun. Producers capture light energy from the Sun during photosynthesis. That energy then passes to every consumer along the food chain.",
   scene:()=>svg(SKY("#fde68a","#fff7ed")+`<g stroke="#f59e0b" stroke-width="4" opacity=".7"><line x1="80" y1="60" x2="180" y2="140"/><line x1="80" y1="60" x2="250" y2="130"/><line x1="80" y1="60" x2="320" y2="140"/></g>`+E(80,55,"☀️",70)+E(190,150,"🌿",40)+E(260,145,"🌳",56)+E(330,150,"🌻",40))},
- {type:"order", eco:"🦅", topic:"Food chains & webs", q:"Build the food chain! Tap the organisms in order, from the producer to the top consumer.",
+ {type:"order", label:"Food-chain puzzle", eco:"🦅", topic:"Food chains & webs", q:"Build the food chain! Tap the organisms in order, from the producer to the top consumer.",
   items:[["🌾","Paddy"],["🦗","Grasshopper"],["🐸","Frog"],["🐍","Snake"],["🦅","Eagle"]],
   a:["Paddy → Grasshopper → Frog → Snake → Eagle"], hint:"Start with the organism that makes its own food. Each one after it eats the one before.",
   why:"Paddy is the producer. The grasshopper (primary consumer) eats paddy, the frog (secondary consumer) eats grasshoppers, the snake (tertiary consumer) eats frogs, and the eagle is the top consumer. Energy flows along the chain in this order.",
@@ -1013,7 +1015,7 @@ const QUESTIONS=[
   a:["Competition","Predation","Mutualism","Commensalism"], hint:"They both want the same limited resource.",
   why:"Competition: both lions need the same limited resource (food). Living things also compete for water, space, mates and sunlight.",
   scene:()=>svg(SKY("#fcd34d","#fef3c7","#a16207")+E(85,115,"🦁",66)+E(315,115,"🦁",66)+E(200,135,"🦌",48)+`<text x="200" y="62" font-size="38" text-anchor="middle">⚡</text>`)},
- {type:"order", eco:"🐘", topic:"Balance & cycles", q:"Build the levels! Tap them in order, from the SMALLEST level to the LARGEST.",
+ {type:"order", label:"Levels puzzle", eco:"🐘", topic:"Balance & cycles", q:"Build the levels! Tap them in order, from the SMALLEST level to the LARGEST.",
   items:[["🐜","Organism"],["🐜🐜","Population"],["🐜🐦","Community"],["🏞️","Ecosystem"]],
   a:["Organism → Population → Community → Ecosystem"], hint:"Start with ONE living thing. End with living AND non-living things together.",
   why:"An organism is one living thing. A population is a group of the same species. A community is all the populations living in one place. An ecosystem is the community together with the non-living things (water, air, soil and sunlight).",
@@ -1261,7 +1263,7 @@ function renderOrder(Q){
 function drawOrder(state){
   const Q=QUESTIONS[curQ()],n=Q.items.length;
   $("#slots").innerHTML=Array.from({length:n},(_,s)=>{const p=G.pick[s],tl=p!=null?G.tiles[p]:null;
-    return (s?`<span class="arrow">→</span>`:"")+`<div class="slot${tl?" filled":""}${state?" "+state[s]:""}" data-s="${s}"><span class="n">${s+1}</span>${tl?`<div>${tl.e}<small>${esc(tl.t)}</small></div>`:""}</div>`;}).join("");
+    return (s?`<span class="arrow">→</span>`:"")+`<div class="slot${tl?" filled":""}${state?" "+state[s]:""}" data-s="${s}"><span class="n">${s+1}</span>${tl?`<div${[...tl.e.replace(/️/g,"")].length>1?' class="multi"':""}>${tl.e}<small>${esc(tl.t)}</small></div>`:""}</div>`;}).join("");
   $("#tiles").innerHTML=G.tiles.map((tl,j)=>`<button class="tile" data-j="${j}"${G.pick.includes(j)||state?" disabled":""}><span class="e">${tl.e}</span>${esc(tl.t)}</button>`).join("");
   document.querySelectorAll(".tile").forEach(b=>b.onclick=()=>pickTile(+b.dataset.j));
   document.querySelectorAll(".slot").forEach(b=>b.onclick=()=>{if(G.locked)return;const s=+b.dataset.s;if(G.pick[s]!=null){G.pick.splice(s,1);sfx.tap();drawOrder();}});
@@ -1507,7 +1509,7 @@ function renderTeacher(){
   const acc=QUESTIONS.map((_,i)=>n?Math.round(att.reduce((a,x)=>a+(x.r[i]||0),0)/n*100):0);
   const overall=n?Math.round(acc.reduce((a,b)=>a+b,0)/TOTAL):0;
   $("#tSummary").innerHTML=`<div class="stat"><b>${n}</b><span>🎮 Games played</span></div><div class="stat"><b>${avg}</b><span>⭐ Average score</span></div><div class="stat"><b>${overall}%</b><span>🎯 Average accuracy</span></div>`;
-  $("#tBars").innerHTML=QUESTIONS.map((Q,i)=>`<div class="bar" title="${esc(Q.q)}"><i style="width:${acc[i]}%;background:${acc[i]>=70?"var(--mint)":acc[i]>=40?"var(--gold)":"var(--coral)"}"></i><span>Q${i+1} · ${esc(Q.type==="order"?"Food-chain puzzle":Q.a[0])} · ${n?acc[i]+"%":"no data"}</span></div>`).join("");
+  $("#tBars").innerHTML=QUESTIONS.map((Q,i)=>`<div class="bar" title="${esc(Q.q)}"><i style="width:${acc[i]}%;background:${acc[i]>=70?"var(--mint)":acc[i]>=40?"var(--gold)":"var(--coral)"}"></i><span>Q${i+1} · ${esc(Q.label||Q.a[0])} · ${n?acc[i]+"%":"no data"}</span></div>`).join("");
   if(n){const worst=acc.indexOf(Math.min(...acc));const Q=QUESTIONS[worst];
     $("#tFocus").innerHTML=`<b>🎯 Reteach first:</b> Q${worst+1} (${acc[worst]}% correct). "${esc(Q.q)}"<br>Key idea: ${esc(Q.why)}`;}
   else $("#tFocus").textContent="No games played yet on this device. Results appear here after students finish a game.";
